@@ -1,0 +1,1 @@
+# Configs, constantes, y helpers base del proyecto

@@ -1,0 +1,1 @@
+# Setup e integración con Supabase
