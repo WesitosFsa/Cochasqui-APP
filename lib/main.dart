@@ -3,10 +3,10 @@ import 'package:cochasqui_park/features/auth/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Necesario para inicializaciones asíncronas
-  await SupabaseConfig.init(); // Aquí inicializas Supabase
+  WidgetsFlutterBinding.ensureInitialized(); 
+  await SupabaseConfig.init(); 
 
-  runApp(const MyApp()); // Lanzas la app después de inicializar
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
