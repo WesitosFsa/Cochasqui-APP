@@ -7,6 +7,7 @@ import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mbtiles/mbtiles.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -25,13 +26,21 @@ class _MapScreen extends State<MapScreen> {
     final file = await copyAssetToFile('assets/maps/Cochasqui.mbtiles');
     return MbTiles(mbtilesPath: file.path);
   }
-
+  List<MapPin> _pins = [];
   @override
   void initState() {
+   
     super.initState();
     _startListeningPosition();
+    _loadPins();
   }
-  
+  void _loadPins() async {
+  final pins = await fetchPinsFromSupabase();
+    setState(() {
+      _pins = pins;
+    });
+  }
+    
 
   Future<void> _startListeningPosition() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -105,26 +114,13 @@ class _MapScreen extends State<MapScreen> {
     },
   );
 }
-final List<MapPin> _pins = [
-  MapPin(
-    location: LatLng(0.055, -78.305),
-    title: 'Entrada Principal',
-    description: 'Aquí empieza el recorrido.',
-    type: 'entrada',
-  ),
-  MapPin(
-    location: LatLng(0.056, -78.306),
-    title: 'Museo',
-    description: 'Contiene piezas arqueológicas importantes.',
-    type: 'museo',
-  ),
-  MapPin(
-    location: LatLng(0.054, -78.304),
-    title: 'Pirámide 1',
-    description: 'Una de las pirámides más antiguas.',
-    type: 'pirámide',
-  ),
-];
+Future<List<MapPin>> fetchPinsFromSupabase() async {
+  final response = await Supabase.instance.client
+      .from('map_pins')
+      .select();
+
+  return (response as List).map((row) => MapPin.fromMap(row)).toList();
+}
 
 
   
