@@ -3,8 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  app_links
   geolocator_windows
   permission_handler_windows
+  powersync_flutter_libs
   sqlite3_flutter_libs
   url_launcher_windows
 )
