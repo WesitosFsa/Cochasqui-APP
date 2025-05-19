@@ -42,7 +42,6 @@ class _LoginScreen extends State<LoginScreen> {
 
       if (response.user != null) {
         // Login exitoso
-        // ignore: use_build_context_synchronously
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()));
 
       } else {
@@ -104,16 +103,8 @@ class _LoginScreen extends State<LoginScreen> {
                       ButtonR(
                           text: "Iniciar Sesion",
                           showIcon: false,
+                          onTap: () => _login(context),
                       ),
-                      if (_error != null) ...[
-                        const SizedBox(height: 10),
-                        Text(
-                          _error!,
-                          style: const TextStyle(color: Colors.red, fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                      ],
 
                       const SizedBox(height: 25),
                       if (_error != null) ...[
