@@ -1,4 +1,5 @@
 
+import 'package:cochasqui_park/features/ar_experience/museum_screen.dart';
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
 import 'package:cochasqui_park/features/maps/map_screen.dart';
 
@@ -15,7 +16,7 @@ class _MainScreen extends State<MainScreen> {
   List  screens = [
     HomeScreen(),
     MapScreen(),
-
+    MuseumScreen(),
   ];
   int currentIndex=0;
   void onTap(int index){

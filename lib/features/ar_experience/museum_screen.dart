@@ -55,7 +55,7 @@ class _MuseumScreenState extends State<MuseumScreen> {
   Future<void> addModel() async {
     var newNode = ARNode(
       type: NodeType.localGLTF2, 
-      uri: "assets/models/Piramide.gltf",
+      uri: "assets/models/Untitled.gltf",
       scale: Vector3(0.2, 0.2, 0.2),
       position: Vector3(0.0, 0.0, -1.0),
       rotation: Vector4(1.0, 0.0, 0.0, 0.0),
