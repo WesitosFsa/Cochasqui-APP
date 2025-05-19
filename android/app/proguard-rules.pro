@@ -23,3 +23,4 @@
 
 # Desugar runtime
 -dontwarn com.google.devtools.build.android.desugar.runtime.**
+
