@@ -3,6 +3,7 @@ import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/features/main/screens/MainScreen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -41,7 +42,8 @@ class _LoginScreen extends State<LoginScreen> {
 
       if (response.user != null) {
         // Login exitoso
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()));
 
       } else {
         setState(() {
