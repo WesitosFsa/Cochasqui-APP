@@ -1,4 +1,5 @@
 
+import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,50 @@ class _RegisterScreene extends State<RegisterScreen> {
       _busy = true;
       _error = null;
     });
+    final email = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+    if (!email.contains('@')) {
+    setState(() {
+      _error = 'Ingresa un correo válido.';
+    });
+    return;
+    }
+    if (password.length < 6) {
+    setState(() {
+      _error = 'La contraseña debe tener al menos 6 caracteres.';
+    });
+    return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final response = await AuthService().signUp(email, password);
+
+      if (response.user != null) {
+        
+        if (mounted) {
+          // ignore: use_build_context_synchronously
+          Navigator.pop(context); // Va al login
+        }
+      } else {
+        setState(() {
+          _error = 'Error al registrarse.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Ya existe una cuenta con este correo.';
+      });
+    } finally {
+      setState(() {
+        _busy = false;
+      });
+    }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -78,12 +122,8 @@ class _RegisterScreene extends State<RegisterScreen> {
                         text: 'Registrarse',
                         showIcon: false,
                         //registro quemado sin coneccion a bdd por el momento
-                        onTap: (){
-                             Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                            );
-                       
+                        onTap: () {
+                          _signup(context);
                         }
                       )
                     ],
