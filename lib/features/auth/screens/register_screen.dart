@@ -38,18 +38,12 @@ class _RegisterScreene extends State<RegisterScreen> {
     setState(() {
       _error = 'Ingresa un correo válido.';
     });
-    return;
     }
     if (password.length < 6) {
     setState(() {
       _error = 'La contraseña debe tener al menos 6 caracteres.';
     });
-    return;
     }
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
     try {
       final response = await AuthService().signUp(email, password);
 
@@ -66,7 +60,7 @@ class _RegisterScreene extends State<RegisterScreen> {
       }
     } catch (e) {
       setState(() {
-        _error = 'Ya existe una cuenta con este correo.';
+        _error = 'Debes llenar todos los campos';
       });
     } finally {
       setState(() {

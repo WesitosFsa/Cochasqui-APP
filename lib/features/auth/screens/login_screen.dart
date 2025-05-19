@@ -100,13 +100,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 _login(context);
                               },
                       ),
-                      const SizedBox(height: 25),
-                      ButtonR(
-                          text: "Iniciar Sesion",
-                          showIcon: false,
-                          onTap: () => _login(context),
-                      ),
-
+                      // Texto de error 
                       const SizedBox(height: 25),
                       if (_error != null) ...[
                         const SizedBox(height: 10),
@@ -117,7 +111,13 @@ class _LoginScreen extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 10),
                       ],
-              
+                      const SizedBox(height: 25),
+                      ButtonR(
+                          text: "Iniciar Sesion",
+                          showIcon: false,
+                          onTap: () => _login(context),
+                      ),
+                      const SizedBox(height: 25),
                       ButtonR(
                           text: "Registrarse",
                           showIcon: false,
