@@ -1,5 +1,6 @@
 
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
+import 'package:cochasqui_park/features/maps/map_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   List  screens = [
     HomeScreen(),
+    MapScreen(),
 
   ];
   int currentIndex=0;
