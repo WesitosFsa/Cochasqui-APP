@@ -1,5 +1,5 @@
 
-
+import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
@@ -34,6 +34,29 @@ class _LoginScreen extends State<LoginScreen> {
       _busy = true;
       _error = null;
     });
+    final email = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+    try {
+      final response = await AuthService().login(email, password);
+
+      if (response.user != null) {
+        // Login exitoso
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+
+      } else {
+        setState(() {
+          _error = 'Error al iniciar sesión.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Correo o contraseña incorrectos.';
+      });
+    } finally {
+      setState(() {
+        _busy = false;
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -79,16 +102,27 @@ class _LoginScreen extends State<LoginScreen> {
                       ButtonR(
                           text: "Iniciar Sesion",
                           showIcon: false,
-                            onTap: () {
-                            
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const LoginScreen()),
-                            );
-                       
-                          }
                       ),
-                                     const SizedBox(height: 25),
+                      if (_error != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.red, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+
+                      const SizedBox(height: 25),
+                      if (_error != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          _error!,
+                          style: const TextStyle(color: Colors.red, fontSize: 14),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                      ],
               
                       ButtonR(
                           text: "Registrarse",
@@ -103,7 +137,7 @@ class _LoginScreen extends State<LoginScreen> {
                           }
                
                       ),
-                                     const SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       ButtonR(
                           text: "Acceder como invitado",
                           showIcon: false,
