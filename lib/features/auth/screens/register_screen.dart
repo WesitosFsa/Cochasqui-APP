@@ -1,5 +1,4 @@
 
-import 'package:cochasqui_park/features/auth/screens/login_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
 import 'package:flutter/material.dart';
