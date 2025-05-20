@@ -1,194 +1,201 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers, duplicate_ignore
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
+import 'package:cochasqui_park/features/auth/screens/register_screen_profile.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/textcamp.dart';
+import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
-
   @override
   State<RegisterScreen> createState() => _RegisterScreen();
 }
-
 class _RegisterScreen extends State<RegisterScreen> {
-  int currentStep = 0;
-  final nombreController = TextEditingController();
-  final apellidoController = TextEditingController();
-  final fechaNacimientoController = TextEditingController(); // Nuevo controlador para la fecha
-  String? genero;
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool aceptoTerminos = false;
-
-  List<Widget> pasosRegistro(BuildContext context) => [
-    _buildNombreApellido(),
-    _buildFechaNacimiento(context),
-    _buildGenero(),
-    _buildEmailPassword(),
-    _buildTerminos(),
-  ];
-
-  Widget _buildNombreApellido() {
-    return Column(
-      children: [
-        TextCamp(label: 'Nombre', controller: nombreController),
-        SizedBox(height: 16),
-        TextCamp(label: 'Apellido', controller: apellidoController),
-      ],
-    );
-  }
-
-  Widget _buildFechaNacimiento(BuildContext context) {
-    return Column(
-      children: [
-        TextCamp(
-          label: 'Fecha de Nacimiento',
-          controller: fechaNacimientoController,
-          readOnly: true, 
-          suffixIcon: Icon(Icons.calendar_today), // Hace que el campo sea de solo lectura
-          onTap: () async {
-            final picked = await showDatePicker(
-              context: context,
-              initialDate: DateTime(2000),
-              firstDate: DateTime(1900),
-              lastDate: DateTime.now(),
-            );
-            if (picked != null) {
-              setState(() {
-                // Formatear la fecha como quieras mostrarla
-                fechaNacimientoController.text = "${picked.day}/${picked.month}/${picked.year}";
-              });
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGenero() {
-    return Column(
-      children: [
-        Text('Selecciona tu género'),
-        DropdownButton<String>(
-          value: genero,
-          items: ['Masculino', 'Femenino', 'Otro']
-              .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-              .toList(),
-          onChanged: (value) {
-            setState(() {
-              genero = value;
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEmailPassword() {
-    return Column(
-      children: [
-        TextCamp(label: 'Correo', controller: emailController),
-        SizedBox(height: 16),
-        TextCamp(label: 'Contraseña', controller: passwordController,obscureText: true,),
-      ],
-    );
-  }
-
-  Widget _buildTerminos() {
-    return CheckboxListTile(
-      title: Text("Acepto términos y condiciones"),
-      value: aceptoTerminos,
-      onChanged: (val) {
-        setState(() {
-          aceptoTerminos = val ?? false;
-        });
-      },
-    );
-  }
+  late TextEditingController _passwordController;
+  late TextEditingController _usernameController;
+  String? _error;
+  late bool _busy;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFECEBE9),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          
-          children: [
-            const SizedBox(height: 50),
-            Expanded(
-              child: pasosRegistro(context)[currentStep],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  void initState() {
+    super.initState();
+
+    _busy = false;
+    _passwordController = TextEditingController(text: '');
+    _usernameController = TextEditingController(text: '');
+  }
+
+  Future<void> _showVerificationDialog(BuildContext context, String email) async {
+  final _codeController = TextEditingController();
+  String? errorText;
+
+  return showDialog(
+    context: context,
+    barrierDismissible: false, // no cerrar tocando afuera
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          // ignore: no_leading_underscores_for_local_identifiers
+          Future<void> _verifyCode() async {
+            final code = _codeController.text.trim();
+
+            if (code.isEmpty) {
+              setState(() {
+                errorText = 'Ingresa el código de verificación';
+              });
+              return;
+            }
+
+            try {
+              // Intentar verificar OTP
+              await Supabase.instance.client.auth.verifyOTP(
+                email: email,
+                token: code,
+                type: OtpType.signup,
+              );
+
+              Navigator.pop(context); 
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Correo verificado Ya puedes registrar tus datos para tu perfil.')),
+                );
+                Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => const RegisterScreenProfile())); 
+              }
+            } catch (e) {
+              setState(() {
+                errorText = 'Código inválido, intenta de nuevo';
+              });
+            }
+          }
+          return AlertDialog(
+            title: Text('Verifica tu correo'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: ButtonR(
-                    text: 'Atrás',
-                    showIcon: false,
-                    onTap: currentStep > 0
-                        ? () {
-                            setState(() {
-                              currentStep--;
-                            });
-                          }
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: ButtonR(
-                    text: currentStep == pasosRegistro(context).length - 1
-                        ? 'Registrarse'
-                        : 'Siguiente',
-                    showIcon: false,
-                    onTap: () {
-                      if (currentStep < pasosRegistro(context).length - 1) {
-                        setState(() {
-                          currentStep++;
-                        });
-                      } else {
-                        _registrarse();
-                      }
-                    },
+                Text('Ingresa el código enviado a tu correo. Revisa spam o notificaciones.'),
+                SizedBox(height: 12),
+                TextField(
+                  controller: _codeController,
+                  decoration: InputDecoration(
+                    labelText: 'Código de verificación',
+                    errorText: errorText,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _registrarse() async {
-    if (!aceptoTerminos) {
-      // mostrar error
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: _verifyCode,
+                child: Text('Verificar'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
+ void _signup(BuildContext context) async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final email = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+    if (!email.contains('@')) {
+      setState(() {
+        _error = 'Ingresa un correo válido.';
+        _busy = false;
+      });
+      return;
+    }
+    if (password.length < 6) {
+      setState(() {
+        _error = 'La contraseña debe tener al menos 6 caracteres.';
+        _busy = false;
+      });
       return;
     }
 
-    // Convertir la fecha de texto a DateTime
-    final fechaParts = fechaNacimientoController.text.split('/');
-    final fechaNacimiento = DateTime(
-      int.parse(fechaParts[2]),
-      int.parse(fechaParts[1]),
-      int.parse(fechaParts[0]),
-    );
+    try {
+      final response = await AuthService().signUp(email, password);
 
-    final res = await AuthService().signUp(emailController.text, passwordController.text);
-    final userId = res.user?.id;
-
-    if (userId != null) {
-      await Supabase.instance.client.from('profiles').insert({
-        'id': userId,
-        'nombre': nombreController.text,
-        'apellido': apellidoController.text,
-        'fecha_nacimiento': fechaNacimiento.toIso8601String(),
-        'genero': genero,
+      if (response.user != null || response.session == null) {
+        // Aquí mostramos el dialog para ingresar el código de verificación
+        await _showVerificationDialog(context, email);
+      } else {
+        setState(() {
+          _error = 'Error al registrarse.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Debes llenar todos los campos';
       });
-
-      // Redirigir a home o donde quieras
+    } finally {
+      setState(() {
+        _busy = false;
+      });
     }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Color(0xFFECEBE9),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(30),
+              child: Center(
+                child: SizedBox(
+                  width: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      text_bold(text: 'Registrate aqui' , size: 15,),
+                      const SizedBox(height: 35),
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: const InputDecoration(labelText: "Correo Electronico"),
+                        enabled: !_busy,
+                        onFieldSubmitted: _busy
+                            ? null
+                            : (String value) {
+                                _signup(context);
+                              },
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        obscureText: true,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                            labelText: "Contraseña para nueva cuenta", errorText: _error),
+                        enabled: !_busy,
+                        onFieldSubmitted: _busy
+                            ? null
+                            : (String value) {
+                                _signup(context);
+                              },
+                      ),
+                      const SizedBox(height: 25),
+                      ButtonR(
+                        text: 'Registrarse',
+                        showIcon: false,
+                        onTap: () {
+                          _signup(context);
+                        }
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 }
