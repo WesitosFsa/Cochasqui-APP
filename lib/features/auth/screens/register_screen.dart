@@ -1,131 +1,194 @@
-
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/features/auth/widgets/textcamp.dart';
 import 'package:flutter/material.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreene();
+  State<RegisterScreen> createState() => _RegisterScreen();
 }
 
-class _RegisterScreene extends State<RegisterScreen> {
-  late TextEditingController _passwordController;
-  late TextEditingController _usernameController;
-  String? _error;
-  late bool _busy;
+class _RegisterScreen extends State<RegisterScreen> {
+  int currentStep = 0;
+  final nombreController = TextEditingController();
+  final apellidoController = TextEditingController();
+  final fechaNacimientoController = TextEditingController(); // Nuevo controlador para la fecha
+  String? genero;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool aceptoTerminos = false;
 
-  @override
-  void initState() {
-    super.initState();
+  List<Widget> pasosRegistro(BuildContext context) => [
+    _buildNombreApellido(),
+    _buildFechaNacimiento(context),
+    _buildGenero(),
+    _buildEmailPassword(),
+    _buildTerminos(),
+  ];
 
-    _busy = false;
-    _passwordController = TextEditingController(text: '');
-    _usernameController = TextEditingController(text: '');
+  Widget _buildNombreApellido() {
+    return Column(
+      children: [
+        TextCamp(label: 'Nombre', controller: nombreController),
+        SizedBox(height: 16),
+        TextCamp(label: 'Apellido', controller: apellidoController),
+      ],
+    );
   }
 
-  void _signup(BuildContext context) async {
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    final email = _usernameController.text.trim();
-    final password = _passwordController.text.trim();
-    if (!email.contains('@')) {
-    setState(() {
-      _error = 'Ingresa un correo válido.';
-    });
-    }
-    if (password.length < 6) {
-    setState(() {
-      _error = 'La contraseña debe tener al menos 6 caracteres.';
-    });
-    }
-    try {
-      final response = await AuthService().signUp(email, password);
+  Widget _buildFechaNacimiento(BuildContext context) {
+    return Column(
+      children: [
+        TextCamp(
+          label: 'Fecha de Nacimiento',
+          controller: fechaNacimientoController,
+          readOnly: true, 
+          suffixIcon: Icon(Icons.calendar_today), // Hace que el campo sea de solo lectura
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime(2000),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+            if (picked != null) {
+              setState(() {
+                // Formatear la fecha como quieras mostrarla
+                fechaNacimientoController.text = "${picked.day}/${picked.month}/${picked.year}";
+              });
+            }
+          },
+        ),
+      ],
+    );
+  }
 
-      if (response.user != null) {
-        
-        if (mounted) {
-          // ignore: use_build_context_synchronously
-          Navigator.pop(context); // Va al login
-        }
-      } else {
+  Widget _buildGenero() {
+    return Column(
+      children: [
+        Text('Selecciona tu género'),
+        DropdownButton<String>(
+          value: genero,
+          items: ['Masculino', 'Femenino', 'Otro']
+              .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              genero = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmailPassword() {
+    return Column(
+      children: [
+        TextCamp(label: 'Correo', controller: emailController),
+        SizedBox(height: 16),
+        TextCamp(label: 'Contraseña', controller: passwordController,obscureText: true,),
+      ],
+    );
+  }
+
+  Widget _buildTerminos() {
+    return CheckboxListTile(
+      title: Text("Acepto términos y condiciones"),
+      value: aceptoTerminos,
+      onChanged: (val) {
         setState(() {
-          _error = 'Error al registrarse.';
+          aceptoTerminos = val ?? false;
         });
-      }
-    } catch (e) {
-      setState(() {
-        _error = 'Debes llenar todos los campos';
-      });
-    } finally {
-      setState(() {
-        _busy = false;
-      });
-    }
+      },
+    );
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFECEBE9),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(30),
-              child: Center(
-                child: SizedBox(
-                  width: 300,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      text_bold(text: 'Registrate aqui' , size: 15,),
-                      const SizedBox(height: 35),
-                      TextFormField(
-                        controller: _usernameController,
-                        decoration: const InputDecoration(labelText: "Correo Electronico"),
-                        enabled: !_busy,
-                        onFieldSubmitted: _busy
-                            ? null
-                            : (String value) {
-                                _signup(context);
-                              },
-                      ),
-                      const SizedBox(height: 20),
-                      TextFormField(
-                        obscureText: true,
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                            labelText: "Contraseña para nueva cuenta", errorText: _error),
-                        enabled: !_busy,
-                        onFieldSubmitted: _busy
-                            ? null
-                            : (String value) {
-                                _signup(context);
-                              },
-                      ),
-                      const SizedBox(height: 25),
-                      ButtonR(
-                        text: 'Registrarse',
-                        showIcon: false,
-                        //registro quemado sin coneccion a bdd por el momento
-                        onTap: () {
-                          _signup(context);
-                        }
-                      )
-                    ],
+      backgroundColor: Color(0xFFECEBE9),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          
+          children: [
+            const SizedBox(height: 50),
+            Expanded(
+              child: pasosRegistro(context)[currentStep],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ButtonR(
+                    text: 'Atrás',
+                    showIcon: false,
+                    onTap: currentStep > 0
+                        ? () {
+                            setState(() {
+                              currentStep--;
+                            });
+                          }
+                        : null,
                   ),
                 ),
-              ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: ButtonR(
+                    text: currentStep == pasosRegistro(context).length - 1
+                        ? 'Registrarse'
+                        : 'Siguiente',
+                    showIcon: false,
+                    onTap: () {
+                      if (currentStep < pasosRegistro(context).length - 1) {
+                        setState(() {
+                          currentStep++;
+                        });
+                      } else {
+                        _registrarse();
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _registrarse() async {
+    if (!aceptoTerminos) {
+      // mostrar error
+      return;
+    }
+
+    // Convertir la fecha de texto a DateTime
+    final fechaParts = fechaNacimientoController.text.split('/');
+    final fechaNacimiento = DateTime(
+      int.parse(fechaParts[2]),
+      int.parse(fechaParts[1]),
+      int.parse(fechaParts[0]),
+    );
+
+    final res = await AuthService().signUp(emailController.text, passwordController.text);
+    final userId = res.user?.id;
+
+    if (userId != null) {
+      await Supabase.instance.client.from('profiles').insert({
+        'id': userId,
+        'nombre': nombreController.text,
+        'apellido': apellidoController.text,
+        'fecha_nacimiento': fechaNacimiento.toIso8601String(),
+        'genero': genero,
+      });
+
+      // Redirigir a home o donde quieras
+    }
   }
 }

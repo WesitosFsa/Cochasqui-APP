@@ -1,0 +1,36 @@
+// ignore_for_file: file_names
+import 'package:flutter/material.dart';
+
+class TextCamp extends StatelessWidget {
+  final String label;
+  final TextEditingController controller;
+  final bool obscureText;
+  final bool readOnly;
+  final Widget? suffixIcon;
+  final VoidCallback? onTap;
+
+  const TextCamp({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.suffixIcon,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      readOnly: readOnly,
+      onTap: onTap,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(),
+        suffixIcon: suffixIcon, 
+      ),
+    );
+  }
+}
