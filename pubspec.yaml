@@ -46,6 +46,7 @@ dependencies:
   powersync: ^1.12.2
   sqlite_async: ^0.11.0
   universal_io: ^2.2.2
+  provider: ^6.0.5
 
 dev_dependencies:
   flutter_test:

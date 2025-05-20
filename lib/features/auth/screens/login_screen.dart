@@ -1,10 +1,13 @@
 
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
-import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
+import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
 import 'package:cochasqui_park/features/main/screens/MainScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -31,35 +34,67 @@ class _LoginScreen extends State<LoginScreen> {
   }
 
   void _login(BuildContext context) async {
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    final email = _usernameController.text.trim();
-    final password = _passwordController.text.trim();
-    try {
-      final response = await AuthService().login(email, password);
+  setState(() {
+    _busy = true;
+    _error = null;
+  });
+  
+  final email = _usernameController.text.trim();
+  final password = _passwordController.text.trim();
 
-      if (response.user != null) {
-        // Login exitoso
-        // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainScreen()));
+  try {
 
-      } else {
-        setState(() {
-          _error = 'Error al iniciar sesión.';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _error = 'Correo o contraseña incorrectos.';
-      });
-    } finally {
-      setState(() {
-        _busy = false;
-      });
+    final response = await AuthService().login(email, password);
+    
+    if (response.user == null) {
+      throw Exception('Usuario no encontrado');
     }
+
+    Map<String, dynamic> profileData = {};
+    try {
+      final profileResponse = await Supabase.instance.client
+        .from('profiles')
+        .select()
+        .eq('id', response.user!.id)
+        .maybeSingle(); 
+
+      profileData = profileResponse ?? {};
+    // ignore: empty_catches
+    } catch (e) {
+      
+    }
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.setUser(UserModel(
+      id: response.user!.id,
+      email: response.user!.email!,
+      nombre: profileData['nombre'],
+      apellido: profileData['apellido'],
+      fechaNacimiento: profileData['fecha_nacimiento'] != null 
+          ? DateTime.tryParse(profileData['fecha_nacimiento']) 
+          : null,
+      genero: profileData['genero'],
+    ));
+    
+    Navigator.pushReplacement(
+      context, 
+      MaterialPageRoute(builder: (_) => const MainScreen())
+    );
+
+  } on AuthException catch (e) {
+    setState(() {
+      _error = 'Credenciales incorrectas: ${e.message}';
+    });
+  } on Exception catch (e) {
+    setState(() {
+      _error = 'Error al iniciar sesión: ${e.toString()}';
+    });
+  } finally {
+    setState(() {
+      _busy = false;
+    });
   }
+} 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,3 +181,4 @@ class _LoginScreen extends State<LoginScreen> {
         ));
   }
 }
+

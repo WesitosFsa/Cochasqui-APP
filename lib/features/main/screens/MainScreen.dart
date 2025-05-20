@@ -1,5 +1,6 @@
 
 import 'package:cochasqui_park/features/ar_experience/museum_screen.dart';
+import 'package:cochasqui_park/features/auth/screens/profile_screen.dart';
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
 import 'package:cochasqui_park/features/maps/map_screen.dart';
 
@@ -15,8 +16,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   List  screens = [
     HomeScreen(),
-    MapScreen(),
     MuseumScreen(),
+    MapScreen(),
+    ProfileScreen()
+    
   ];
   int currentIndex=0;
   void onTap(int index){

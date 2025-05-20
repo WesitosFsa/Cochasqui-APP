@@ -1,8 +1,8 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, duplicate_ignore
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen_profile.dart';
-import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets//fonts_bold.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 class RegisterScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
-import 'package:cochasqui_park/features/auth/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/textcamp.dart';
-import 'package:cochasqui_park/features/main/screens/MainScreen.dart';
+import 'package:cochasqui_park/features/auth/screens/login_screen.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -48,7 +48,6 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
             );
             if (picked != null) {
               setState(() {
-                // Formatear la fecha como quieras mostrarla
                 fechaNacimientoController.text = "${picked.day}/${picked.month}/${picked.year}";
               });
             }
@@ -159,7 +158,6 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
     return;
   }
 
-  // Convertir fecha:
   final fechaParts = fechaNacimientoController.text.split('/');
   final fechaNacimiento = DateTime(
     int.parse(fechaParts[2]),
@@ -186,12 +184,12 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
   });
 
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('Perfil registrado correctamente')),
+    SnackBar(content: Text('Usuario registrado correctamente Ingresa de nuevo para poder disfrutar de la experiencia')),
   );
 
-  await Future.delayed(Duration(seconds: 2)); // opcional
+  await Future.delayed(Duration(seconds: 2)); 
 
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen()));
+  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
 
   }
 
