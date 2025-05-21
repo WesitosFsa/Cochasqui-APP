@@ -1,6 +1,7 @@
 
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
+import 'package:cochasqui_park/features/auth/screens/resetpassword_screen.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
@@ -23,33 +24,25 @@ class _LoginScreen extends State<LoginScreen> {
   late TextEditingController _usernameController;
   String? _error;
   late bool _busy;
-
   @override
   void initState() {
     super.initState();
-
     _busy = false;
     _passwordController = TextEditingController(text: '');
     _usernameController = TextEditingController(text: '');
   }
-
   void _login(BuildContext context) async {
   setState(() {
     _busy = true;
     _error = null;
   });
-  
   final email = _usernameController.text.trim();
   final password = _passwordController.text.trim();
-
   try {
-
     final response = await AuthService().login(email, password);
-    
     if (response.user == null) {
       throw Exception('Usuario no encontrado');
     }
-
     Map<String, dynamic> profileData = {};
     try {
       final profileResponse = await Supabase.instance.client
@@ -57,11 +50,9 @@ class _LoginScreen extends State<LoginScreen> {
         .select()
         .eq('id', response.user!.id)
         .maybeSingle(); 
-
       profileData = profileResponse ?? {};
     // ignore: empty_catches
     } catch (e) {
-      
     }
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.setUser(UserModel(
@@ -135,8 +126,16 @@ class _LoginScreen extends State<LoginScreen> {
                                 _login(context);
                               },
                       ),
-                      // Texto de error 
                       const SizedBox(height: 25),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const ForgotPasswordScreen())
+                            );
+                          },
+                          child: const Text('¿Olvidaste tu contraseña?'),
+                        ),
                       if (_error != null) ...[
                         const SizedBox(height: 10),
                         Text(

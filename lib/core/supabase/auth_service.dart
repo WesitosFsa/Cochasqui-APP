@@ -21,5 +21,34 @@ class AuthService {
     await _supabase.auth.signOut();
   }
 
+
+Future<void> sendRecoveryCode(String email) async {
+  await Supabase.instance.client.auth.signInWithOtp(
+    email: email,
+    emailRedirectTo: null, 
+  );
+}
+
+
+Future<void> verifyRecoveryCodeAndChangePassword({
+  required String email,
+  required String token,
+  required String newPassword,
+}) async {
+  final res = await Supabase.instance.client.auth.verifyOTP(
+    type: OtpType.email,
+    token: token,
+    email: email,
+  );
+
+  if (res.user == null) {
+    throw Exception("Código inválido o expirado");
+  }
+
+  await Supabase.instance.client.auth.updateUser(
+    UserAttributes(password: newPassword),
+  );
+}
+
   User? get currentUser => _supabase.auth.currentUser;
 }

@@ -1,4 +1,3 @@
-// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 
 class TextCamp extends StatelessWidget {
@@ -6,8 +5,10 @@ class TextCamp extends StatelessWidget {
   final TextEditingController controller;
   final bool obscureText;
   final bool readOnly;
+  final bool enabled;
   final Widget? suffixIcon;
   final VoidCallback? onTap;
+  final ValueChanged<String>? onSubmitted;
 
   const TextCamp({
     super.key,
@@ -15,21 +16,25 @@ class TextCamp extends StatelessWidget {
     required this.controller,
     this.obscureText = false,
     this.readOnly = false,
+    this.enabled = true,
     this.suffixIcon,
     this.onTap,
+    this.onSubmitted,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscureText,
       readOnly: readOnly,
+      enabled: enabled,
       onTap: onTap,
+      onFieldSubmitted: onSubmitted,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(),
-        suffixIcon: suffixIcon, 
+        border: const OutlineInputBorder(),
+        suffixIcon: suffixIcon,
       ),
     );
   }
