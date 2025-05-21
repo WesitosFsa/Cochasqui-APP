@@ -1,5 +1,5 @@
 import 'package:cochasqui_park/core/config.dart';
-import 'package:cochasqui_park/features/auth/screens/welcome_screen.dart';
+import 'package:cochasqui_park/features/main/screens/welcome_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

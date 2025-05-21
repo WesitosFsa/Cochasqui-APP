@@ -1,6 +1,6 @@
 
 import 'package:cochasqui_park/features/ar_experience/museum_screen.dart';
-import 'package:cochasqui_park/features/auth/screens/profile_screen.dart';
+import 'package:cochasqui_park/features/profile/profile_screen.dart';
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
 import 'package:cochasqui_park/features/maps/map_screen.dart';
 
