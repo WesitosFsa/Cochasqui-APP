@@ -3,6 +3,7 @@ import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen_profile.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/shared/widgets//fonts_bold.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 class RegisterScreen extends StatefulWidget {
@@ -159,24 +160,25 @@ class _RegisterScreen extends State<RegisterScreen> {
                     children: [
                       text_bold(text: 'Registrate aqui' , size: 15,),
                       const SizedBox(height: 35),
-                      TextFormField(
+                      TextCamp(
+                        label: "Correo Electrónico",
                         controller: _usernameController,
-                        decoration: const InputDecoration(labelText: "Correo Electronico"),
                         enabled: !_busy,
-                        onFieldSubmitted: _busy
+                        onSubmitted: _busy
                             ? null
                             : (String value) {
                                 _signup(context);
                               },
                       ),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        obscureText: true,
+                      TextCamp(
+                        label: "Contraseña de registro",
                         controller: _passwordController,
-                        decoration: InputDecoration(
-                            labelText: "Contraseña para nueva cuenta", errorText: _error),
+                        obscureText: true,
                         enabled: !_busy,
-                        onFieldSubmitted: _busy
+                        errorText: _error,
+                        passwordView: true,
+                        onSubmitted: _busy
                             ? null
                             : (String value) {
                                 _signup(context);

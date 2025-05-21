@@ -95,7 +95,6 @@ Widget build(BuildContext context) {
       children: [
         SizedBox(height: 20),
         text_bold(text: 'Perfil de Usuario', size: 20,),
-        // Foto de perfil quemada
         Center(
           child: CircleAvatar(
             radius: 50,

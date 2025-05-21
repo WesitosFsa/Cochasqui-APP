@@ -6,6 +6,7 @@ import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
 import 'package:cochasqui_park/features/main/screens/MainScreen.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -103,24 +104,25 @@ class _LoginScreen extends State<LoginScreen> {
                     children: [
                       text_bold(text: 'Registrate o accede como invitado',size: 16,),
                       const SizedBox(height: 35),
-                      TextFormField(
+                      TextCamp(
+                        label: "Correo Electrónico",
                         controller: _usernameController,
-                        decoration: const InputDecoration(labelText: "Correo Electronico"),
                         enabled: !_busy,
-                        onFieldSubmitted: _busy
+                        onSubmitted: _busy
                             ? null
                             : (String value) {
                                 _login(context);
                               },
                       ),
                       const SizedBox(height: 20),
-                      TextFormField(
-                        obscureText: true,
+                      TextCamp(
+                        label: "Contraseña",
                         controller: _passwordController,
-                        decoration: InputDecoration(
-                            labelText: "Contraseña", errorText: _error),
+                        obscureText: true,
                         enabled: !_busy,
-                        onFieldSubmitted: _busy
+                        errorText: _error,
+                        passwordView: true,
+                        onSubmitted: _busy
                             ? null
                             : (String value) {
                                 _login(context);

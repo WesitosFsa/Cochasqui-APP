@@ -1,5 +1,7 @@
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 
 class VerifyCodeScreen extends StatefulWidget {
@@ -58,35 +60,37 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Verificar código")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Text("Revisa tu correo y escribe el código recibido"),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _codeController,
-              decoration: const InputDecoration(labelText: "Código"),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: "Nueva contraseña"),
-            ),
-            const SizedBox(height: 30),
-            ButtonR(
-              text: "Cambiar contraseña",
-              onTap: _busy ? null : _verifyAndReset,
-              showIcon: false,
-            ),
-            if (_message != null) ...[
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              text_bold(text: "Revisa tu correo y escribe el código recibido", size: 15),
               const SizedBox(height: 20),
-              Text(_message!),
-            ]
-          ],
+              TextCamp(label: 'Código', controller: _codeController),
+              const SizedBox(height: 20),
+              TextCamp(
+                label: "Nueva contraseña",
+                controller: _passwordController,
+                obscureText: true,
+                passwordView: true,
+              ),
+              const SizedBox(height: 30),
+              ButtonR(
+                text: "Cambiar contraseña",
+                onTap: _busy ? null : _verifyAndReset,
+                showIcon: false,
+              ),
+              if (_message != null) ...[
+                const SizedBox(height: 20),
+                Text(_message!),
+              ]
+            ],
+          ),
         ),
       ),
+
     );
   }
 }

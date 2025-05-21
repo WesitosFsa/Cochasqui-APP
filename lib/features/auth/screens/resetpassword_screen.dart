@@ -1,6 +1,8 @@
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/auth/screens/verifypassword_screen.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -54,12 +56,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text("Ingresa tu correo electrónico"),
+            text_bold(text: "Ingresa tu correo electrónico" , size: 15),
             const SizedBox(height: 20),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: "Correo"),
-            ),
+            TextCamp(label: 'Correo', controller: _emailController),
             const SizedBox(height: 30),
             ButtonR(
               text: "Enviar código",
