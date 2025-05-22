@@ -1,3 +1,4 @@
+import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 class TextCamp extends StatefulWidget {
@@ -57,8 +58,17 @@ class _TextCampState extends State<TextCamp> {
       decoration: InputDecoration(
         labelText: widget.label,
         border: const OutlineInputBorder(),
+        
+        focusedBorder: OutlineInputBorder( // Cambia el color al enfocar
+        borderSide: BorderSide(color: AppColors.azulMedio), // Cambia a tu color desead
+        
+        ),
+      
+        
+        
         errorText: widget.errorText,
         suffixIcon: widget.passwordView
+        
             ? IconButton(
                 icon: Icon(
                   _obscure ? Icons.visibility_off : Icons.visibility,

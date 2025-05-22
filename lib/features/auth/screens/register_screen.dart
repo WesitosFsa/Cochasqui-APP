@@ -35,6 +35,7 @@ class _RegisterScreen extends State<RegisterScreen> {
     barrierDismissible: false, // no cerrar tocando afuera
     builder: (context) {
       return StatefulBuilder(
+        
         builder: (context, setState) {
           // ignore: no_leading_underscores_for_local_identifiers
           Future<void> _verifyCode() async {
@@ -146,6 +147,12 @@ class _RegisterScreen extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+      backgroundColor: const Color(0xFFECEBE9), 
+      elevation: 0, 
+      title: text_bold(text: "Registro", size: 20), 
+      iconTheme: const IconThemeData(color: Colors.black), 
+    ),
         backgroundColor: Color(0xFFECEBE9),
         body: Center(
           child: SingleChildScrollView(

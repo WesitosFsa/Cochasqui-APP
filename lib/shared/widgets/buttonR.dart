@@ -1,6 +1,7 @@
 // ignore: duplicate_ignore
 // ignore: file_names
 // ignore_for_file: file_names
+import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -30,7 +31,7 @@ class ButtonR extends StatelessWidget {
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFFFC9404),
+          color: AppColors.azulOscuro,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +42,7 @@ class ButtonR extends StatelessWidget {
               Text(
                 text!,
                 style: const TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: AppColors.blanco,
                   fontSize: 16,
                 ),
               ),

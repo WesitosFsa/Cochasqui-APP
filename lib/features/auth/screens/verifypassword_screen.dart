@@ -59,13 +59,20 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Verificar código")),
+      backgroundColor: Color(0xFFECEBE9),
+      appBar: AppBar(
+      backgroundColor: const Color(0xFFECEBE9), 
+      elevation: 0, 
+      title: text_bold(text: "Verificar codigo", size: 20), 
+      iconTheme: const IconThemeData(color: Colors.black), 
+    ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 20),
               text_bold(text: "Revisa tu correo y escribe el código recibido", size: 15),
               const SizedBox(height: 20),
               TextCamp(label: 'Código', controller: _codeController),

@@ -51,7 +51,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Recuperar contraseña")),
+      backgroundColor: Color(0xFFECEBE9),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFECEBE9), // Mismo color que el fondo
+        elevation: 0, // Sin sombra para que se vea plano
+        title: text_bold(text: "Recuperar contraseña", size: 20), // Título con tu estilo personalizado
+        iconTheme: const IconThemeData(color: Colors.black), // Cambia el color del ícono de retroceso si es necesario
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
