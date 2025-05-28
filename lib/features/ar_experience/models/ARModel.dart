@@ -2,27 +2,17 @@ class ARModel {
   final String id;
   final String name;
   final String description;
-  final String imagePath;
-  final String gltfPath;
   final String category;
+  final String key; // clave que viene de la BDD
 
   ARModel({
     required this.id,
     required this.name,
     required this.description,
-    required this.imagePath,
-    required this.gltfPath,
     required this.category,
+    required this.key,
   });
 
-  factory ARModel.fromMap(Map<String, dynamic> data) {
-    return ARModel(
-      id: data['id'],
-      name: data['name'],
-      description: data['description'],
-      imagePath: data['imagePath'],
-      gltfPath: data['gltfPath'],
-      category: data['category'],
-    );
-  }
+  String get imagePath => "assets/images/$key.jpg";
+  String get gltfPath => "assets/models/$key.gltf";
 }
