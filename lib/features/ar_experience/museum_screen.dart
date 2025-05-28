@@ -3,6 +3,7 @@ import 'package:ar_flutter_plugin_updated/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin_updated/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin_updated/managers/ar_session_manager.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:vector_math/vector_math_64.dart';
 import 'package:ar_flutter_plugin_updated/ar_flutter_plugin.dart';
 import 'package:ar_flutter_plugin_updated/models/ar_node.dart';

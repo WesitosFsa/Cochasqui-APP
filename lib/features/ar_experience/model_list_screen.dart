@@ -25,6 +25,7 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    // ignore: unused_local_variable
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
@@ -75,6 +76,7 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       gradient: LinearGradient(
+                        // ignore: deprecated_member_use
                         colors: [Colors.black.withOpacity(0.6), Colors.transparent],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
