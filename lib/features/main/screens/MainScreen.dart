@@ -1,5 +1,6 @@
 
-import 'package:cochasqui_park/features/ar_experience/museum_screen.dart';
+import 'package:cochasqui_park/features/ar_experience/list/ListaModelos.dart';
+import 'package:cochasqui_park/features/ar_experience/model_list_screen.dart';
 import 'package:cochasqui_park/features/profile/profile_screen.dart';
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
 import 'package:cochasqui_park/features/maps/map_screen.dart';
@@ -16,7 +17,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   List  screens = [
     HomeScreen(),
-    MuseumScreen(),
+    ModelListScreen(models: mockModels),
     MapScreen(),
     ProfileScreen()
     
