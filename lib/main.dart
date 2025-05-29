@@ -1,4 +1,5 @@
 import 'package:cochasqui_park/core/config.dart';
+import 'package:cochasqui_park/features/ar_experience/qr_scanner.dart';
 import 'package:cochasqui_park/features/main/screens/welcome_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WelcomeScreen(),
+      home: QRScannerScreen(),
       
     );
   }
