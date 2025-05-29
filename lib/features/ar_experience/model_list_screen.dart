@@ -1,9 +1,11 @@
 import 'package:cochasqui_park/features/ar_experience/models/ARModel.dart';
+import 'package:cochasqui_park/features/ar_experience/qr_scanner.dart';
 import 'package:flutter/material.dart';
-import 'museum_screen.dart';     // La pantalla donde se visualiza el modelo en AR
+import 'museum_screen.dart'; // La pantalla donde se visualiza el modelo en AR
 
 class ModelListScreen extends StatefulWidget {
-  final List<ARModel> models; // Aquí llegan tus modelos desde la BDD o una lista local
+  final List<ARModel>
+      models; // Aquí llegan tus modelos desde la BDD o una lista local
 
   const ModelListScreen({super.key, required this.models});
 
@@ -11,10 +13,15 @@ class ModelListScreen extends StatefulWidget {
   State<ModelListScreen> createState() => _ModelListScreenState();
 }
 
-class _ModelListScreenState extends State<ModelListScreen> with TickerProviderStateMixin {
+class _ModelListScreenState extends State<ModelListScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
-  final categories = ['pirámides', 'museo', 'camping']; // Las categorías que quieres mostrar
+  final categories = [
+    'pirámides',
+    'museo',
+    'camping'
+  ]; // Las categorías que quieres mostrar
 
   @override
   void initState() {
@@ -41,7 +48,8 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
         controller: _tabController,
         children: categories.map((category) {
           // Filtrar los modelos por categoría
-          final filtered = widget.models.where((m) => m.category == category).toList();
+          final filtered =
+              widget.models.where((m) => m.category == category).toList();
 
           return ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -51,12 +59,69 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
 
               return GestureDetector(
                 onTap: () {
-                  // Al hacer tap, te manda a la pantalla de AR
-                  Navigator.push(
+                  if (!model.unlocked) {
+                    // En lugar de mostrar SnackBar, abrimos QRScanner y le pasamos el modelo tocado
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => QRScannerScreen(model: model),
+
+                      ),
+                    );
+                    return;
+                  }
+                    Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => MuseumScreen(model: model),
                     ),
+                  );
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      final controller = TextEditingController();
+                      return AlertDialog(
+                        title: Text("Adivinanza"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(model.riddle),
+                            TextField(
+                              controller: controller,
+                              decoration:
+                                  InputDecoration(labelText: 'Tu respuesta'),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              final userAnswer =
+                                  controller.text.trim().toLowerCase();
+                              final correctAnswer =
+                                  model.answer.trim().toLowerCase();
+
+                              Navigator.pop(context);
+                              if (userAnswer == correctAnswer) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MuseumScreen(model: model),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Respuesta incorrecta, intenta de nuevo')),
+                                );
+                              }
+                            },
+                            child: Text("Comprobar"),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
                 child: Container(
@@ -68,7 +133,9 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
                       image: AssetImage(model.imagePath), // Imagen de fondo
                       fit: BoxFit.cover,
                     ),
-                    boxShadow: [BoxShadow(blurRadius: 8, color: Colors.black26)],
+                    boxShadow: [
+                      BoxShadow(blurRadius: 8, color: Colors.black26)
+                    ],
                   ),
                   child: Container(
                     alignment: Alignment.bottomLeft,
@@ -77,14 +144,19 @@ class _ModelListScreenState extends State<ModelListScreen> with TickerProviderSt
                       borderRadius: BorderRadius.circular(20),
                       gradient: LinearGradient(
                         // ignore: deprecated_member_use
-                        colors: [Colors.black.withOpacity(0.6), Colors.transparent],
+                        colors: [
+                          Colors.transparent
+                        ],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
                     ),
                     child: Text(
                       model.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
