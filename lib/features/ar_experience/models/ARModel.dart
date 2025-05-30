@@ -18,9 +18,20 @@ class ARModel {
     required this.answer,
     this.unlocked = false,
   });
+  factory ARModel.fromJson(Map<String, dynamic> json) {
+    return ARModel(
+      id: json['id'].toString(),
+      name: json['name'],
+      description: json['description'],
+      category: json['category'],
+      key: json['key'],
+      riddle: json['riddle'],
+      answer: json['answer'],
+    );
+  }
 
-  String get imagePath => "assets/images/$key.jpg";
-  String get gltfPath => "assets/models/$key.gltf";
+  String get imagePath => "assets/AR/images/$key.jpg";
+  String get gltfPath => "assets/AR/models/$key.gltf";
 
   // Aquí te hace falta un método copyWith para poder cambiar unlocked sin perder datos:
   ARModel copyWith({bool? unlocked}) {

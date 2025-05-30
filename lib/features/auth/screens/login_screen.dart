@@ -1,5 +1,6 @@
 
 import 'package:cochasqui_park/core/supabase/auth_service.dart';
+import 'package:cochasqui_park/features/admin/ManageARadmin.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
 import 'package:cochasqui_park/features/auth/screens/resetpassword_screen.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
@@ -171,6 +172,14 @@ class _LoginScreen extends State<LoginScreen> {
                       ButtonR(
                           text: "Acceder como invitado",
                           showIcon: false,
+                          onTap: () {
+                            
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const ManageARadmin()),
+                            );
+                       
+                          }
                       )
       
                     ],

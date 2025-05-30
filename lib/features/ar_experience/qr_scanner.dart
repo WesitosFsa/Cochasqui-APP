@@ -14,7 +14,6 @@ class QRScannerScreen extends StatefulWidget {
   _QRScannerScreenState createState() => _QRScannerScreenState();
 }
 
-
 class _QRScannerScreenState extends State<QRScannerScreen> {
   bool _isProcessing = false;
   String? scannedCode;
@@ -62,109 +61,113 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
- return Scaffold(
-    body: Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.blanco,
-            AppColors.azulOscuro,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColors.blanco,
+              AppColors.azulOscuro,
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 👉 adivinanza SIEMPRE visible arriba
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  widget.model.riddle,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // 👉 escáner
-              Container(
-                width: 250,
-                height: 250,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: AppColors.negroAzulado, width: 4),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, 4),
-                    )
-                  ],
-                ),
-                child: MobileScanner(
-                  onDetect: _onBarcodeDetected,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // 👉 mostrar el QR escaneado (si hay)
-              if (scannedCode != null) ...[
-                const Icon(Icons.qr_code, size: 80, color: Colors.white),
-                const SizedBox(height: 10),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Usa spaceBetween para empujar el contenido arriba y abajo
+              crossAxisAlignment: CrossAxisAlignment.stretch, // Estirar horizontalmente
+              children: [
+                // 👉 adivinanza SIEMPRE visible arriba
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 20.0), // Se añadió padding superior
                   child: Text(
-                    scannedCode!,
-                    style: const TextStyle(fontSize: 16),
+                    widget.model.riddle,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ],
-            ],
-          ),
+                const SizedBox(height: 20),
 
-          // 👉 botón responder abajo
-          Positioned(
-            bottom: 60,
-            left: 30,
-            right: 30,
-            child: ElevatedButton(
-              onPressed: scannedCode != null ? _handleUnlock : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.azulMedio,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                // 👉 escáner
+                Center( // Centrar el escáner horizontalmente
+                  child: Container(
+                    width: 250,
+                    height: 250,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: AppColors.negroAzulado, width: 4),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 6,
+                          offset: Offset(0, 4),
+                        )
+                      ],
+                    ),
+                    child: MobileScanner(
+                      onDetect: _onBarcodeDetected,
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: const Text(
-                'Responder',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  letterSpacing: 1.2,
+
+                const SizedBox(height: 20),
+
+                // 👉 mostrar el QR escaneado (si hay)
+                if (scannedCode != null) ...[
+                  const Center(child: Icon(Icons.qr_code, size: 80, color: Colors.white)), // Icono centrado
+                  const SizedBox(height: 10),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      scannedCode!,
+                      style: const TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+                const Spacer(), // Empuja el contenido de arriba hacia arriba
+              ],
+            ),
+
+            // 👉 botón responder abajo
+            Positioned(
+              bottom: 60,
+              left: 30,
+              right: 30,
+              child: ElevatedButton(
+                onPressed: scannedCode != null ? _handleUnlock : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.azulMedio,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: const Text(
+                  'Responder',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    letterSpacing: 1.2,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }
 
