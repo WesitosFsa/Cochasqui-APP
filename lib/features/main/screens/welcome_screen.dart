@@ -80,6 +80,7 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                       SizedBox(height: 20),
                       ButtonR(
                         width: 120,
+                        icon: Icons.play_arrow,
                         showIcon: _currentPage < 2,
                         
                         text: _currentPage < 2 ? null : "Empezar",

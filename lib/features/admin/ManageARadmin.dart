@@ -1,3 +1,7 @@
+import 'package:cochasqui_park/shared/themes/colors.dart';
+import 'package:cochasqui_park/shared/widgets/DropdownCamp.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -5,6 +9,7 @@ class ManageARadmin extends StatefulWidget {
   const ManageARadmin({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ManageARadminState createState() => _ManageARadminState();
 }
 
@@ -17,6 +22,7 @@ class _ManageARadminState extends State<ManageARadmin> {
 
   String? selectedCategory;
   String? selectedKey;
+  String currentView = 'list';
   Map<String, dynamic>? editingModel;
 
   final Map<String, List<String>> categoryKeys = {
@@ -38,6 +44,19 @@ class _ManageARadminState extends State<ManageARadmin> {
       'Piramide5'
     ],
   };
+  void _resetForm() {
+    _formKey.currentState
+        ?.reset(); // Reinicia el estado del formulario de forma segura
+    nameController.clear();
+    descController.clear();
+    riddleController.clear();
+    answerController.clear();
+    setState(() {
+      selectedCategory = null;
+      selectedKey = null;
+      editingModel = null;
+    });
+  }
 
   void uploadToSupabase() async {
     if (!_formKey.currentState!.validate()) return;
@@ -53,7 +72,10 @@ class _ManageARadminState extends State<ManageARadmin> {
     };
 
     if (editingModel != null) {
-      await supabase.from('ar_models').update(data).eq('id', editingModel!['id']);
+      await supabase
+          .from('ar_models')
+          .update(data)
+          .eq('id', editingModel!['id']);
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Modelo actualizado')));
     } else {
@@ -81,109 +103,226 @@ class _ManageARadminState extends State<ManageARadmin> {
 
   @override
   Widget build(BuildContext context) {
-    final keys = selectedCategory != null ? categoryKeys[selectedCategory]! : [];
+    // ignore: unused_local_variable
+    final keys =
+        selectedCategory != null ? categoryKeys[selectedCategory]! : [];
 
     return Scaffold(
       appBar: AppBar(title: Text('Administrar Modelos AR')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Nombre'),
-              ),
-              TextFormField(
-                controller: descController,
-                decoration: InputDecoration(labelText: 'Descripción'),
-              ),
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(labelText: 'Categoría'),
-                value: selectedCategory,
-                items: categoryKeys.keys.map((cat) {
-                  return DropdownMenuItem(value: cat, child: Text(cat));
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value;
-                    selectedKey = null;
-                  });
-                },
-              ),
-              if (selectedCategory != null)
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(labelText: 'Key'),
-                  value: selectedKey,
-                  items: categoryKeys[selectedCategory]!.map((k) {
-                    return DropdownMenuItem(value: k, child: Text(k));
-                  }).toList(),
-                  onChanged: (value) => setState(() => selectedKey = value),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: ButtonR(
+                    width: 100,
+                    icon: Icons.add,
+                    text: 'Añadir',
+                    onTap: () {
+                      _resetForm(); 
+                      setState(() {
+                        currentView = 'add';
+                      });
+                    },
+                    color: AppColors.verde,
+                  ),
                 ),
-              TextFormField(
-                controller: riddleController,
-                decoration: InputDecoration(labelText: 'Adivinanza'),
-              ),
-              TextFormField(
-                controller: answerController,
-                decoration: InputDecoration(labelText: 'Respuesta'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: uploadToSupabase,
-                child: Text(editingModel != null ? 'Guardar Cambios' : 'Subir Modelo'),
-              ),
-              SizedBox(height: 20),
-              FutureBuilder<List<Map<String, dynamic>>>(
-                future: fetchModels(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
-                  final models = snapshot.data!;
-                  return Column(
-                    children: models.map((model) {
-                      return Card(
-                        child: ListTile(
-                          title: Text(model['name']),
-                          subtitle: Text('Categoría: ${model['category']} | Key: ${model['key']}'),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  setState(() {
-                                    editingModel = model;
-                                    nameController.text = model['name'];
-                                    descController.text = model['description'];
-                                    riddleController.text = model['riddle'];
-                                    answerController.text = model['answer'];
-                                    selectedCategory = model['category'];
-                                    selectedKey = model['key'];
-                                  });
-                                },
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () async {
-                                  final supabase = Supabase.instance.client;
-                                  await supabase
-                                      .from('ar_models')
-                                      .delete()
-                                      .eq('id', model['id']);
-                                  setState(() {});
-                                },
-                              ),
-                            ],
-                          ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ButtonR(
+                    width: 100,
+                    icon: Icons.edit,
+                    text: 'Editar',
+                    onTap: () {
+                      if (editingModel != null) {
+                        setState(() {
+                          currentView = 'edit';
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text(
+                                  'Por favor, selecciona un modelo primero desde "Ver modelos" para editar.')),
+                        );
+                      }
+                    },
+                    color: AppColors.azulMedio,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ButtonR(
+                    width: 100,
+                    icon: Icons.view_agenda,
+                    text: 'Listar',
+                    onTap: () {
+                      setState(() {
+                        currentView = 'list';
+                        _resetForm();
+                      });
+                    },
+                    color: AppColors.amarillo,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+            const SizedBox(height: 20),
+            if (currentView == 'add' || currentView == 'edit')
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: [
+                      const SizedBox(height: 10),
+                      TextCamp(
+                        label: 'Nombre',
+                        controller: nameController,
+                      ),
+                      const SizedBox(height: 10),
+                      TextCamp(
+                        label: 'Descripción',
+                        controller: descController,
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownCamp(
+                        label: 'Categoría',
+                        value: selectedCategory,
+                        items: categoryKeys.keys.toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedCategory = value;
+                            selectedKey =
+                                null; // Reiniciar clave cuando la categoría cambia
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      if (selectedCategory != null)
+                        DropdownCamp(
+                          label: 'Modelo',
+                          value: selectedKey,
+                          items: categoryKeys[selectedCategory]!,
+                          onChanged: (value) =>
+                              setState(() => selectedKey = value),
                         ),
-                      );
-                    }).toList(),
-                  );
-                },
-              )
-            ],
-          ),
+                      const SizedBox(height: 10),
+                      TextCamp(
+                        label: 'Adivinanza',
+                        controller: riddleController,
+                      ),
+                      const SizedBox(height: 10),
+                      TextCamp(
+                        label: 'Respuesta',
+                        controller: answerController,
+                      ),
+                      const SizedBox(height: 10),
+                      ButtonR(
+                        icon: Icons.save,
+                        onTap: uploadToSupabase,
+                        text: editingModel != null
+                            ? 'Guardar Cambios'
+                            : 'Subir Modelo',
+                        color: AppColors.azulOscuro,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (currentView == 'list')
+              Expanded(
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: fetchModels(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                              color: Colors.white)); // Color para el spinner
+                    }
+                    if (snapshot.hasError) {
+                      return Center(
+                          child: Text('Error: ${snapshot.error}',
+                              style: const TextStyle(color: Colors.red)));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                          child: Text('No hay modelos para mostrar.',
+                              style: TextStyle(color: Colors.white)));
+                    }
+                    final models = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: models.length,
+                      itemBuilder: (context, index) {
+                        final model = models[index];
+                        return Card(
+                          color: Colors.grey[
+                              850], // Fondo oscuro para las tarjetas de la lista
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 0),
+                          child: ListTile(
+                            title: Text(model['name'],
+                                style: const TextStyle(color: Colors.white)),
+                            subtitle: Text(
+                                'Categoría: ${model['category']} | Modelo: ${model['key']}',
+                                style: const TextStyle(color: Colors.grey)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit,
+                                      color: Colors.blueAccent),
+                                  onPressed: () {
+                                    setState(() {
+                                      editingModel = model;
+                                      nameController.text = model['name'];
+                                      descController.text =
+                                          model['description'];
+                                      riddleController.text = model['riddle'];
+                                      answerController.text = model['answer'];
+                                      selectedCategory = model['category'];
+                                      selectedKey = model['key'];
+                                      currentView =
+                                          'edit'; // Cambiar a la vista de edición
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.redAccent),
+                                  onPressed: () async {
+                                    final supabase = Supabase.instance.client;
+                                    try {
+                                      await supabase
+                                          .from('ar_models')
+                                          .delete()
+                                          .eq('id', model['id']);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Modelo eliminado exitosamente')));
+                                      setState(
+                                          () {}); // Actualizar la lista después de eliminar
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Error al eliminar: ${e.toString()}')));
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+          ],
         ),
       ),
     );

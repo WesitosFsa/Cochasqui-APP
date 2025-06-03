@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cochasqui_park/features/maps/map_controller.dart';
 import 'package:cochasqui_park/features/maps/widgets/map_pin.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
@@ -124,8 +125,10 @@ class _MapScreen extends State<MapScreen> {
               Text(pin.description),
               const SizedBox(height: 16),
               if (!pin.visited)
-                ElevatedButton(
-                  onPressed: () async {
+                
+                ButtonR(
+                  text: 'Marcar como visitado',
+                  onTap: () async {
                     await Supabase.instance.client.from('visited_pins').insert({
                       'user_id': Supabase.instance.client.auth.currentUser!.id,
                       'pin_id': pin.id,
@@ -136,12 +139,19 @@ class _MapScreen extends State<MapScreen> {
                       const SnackBar(content: Text('Punto marcado como visitado')),
                     );
                   },
-                  child: const Text('Marcar como visitado'),
+                  color: Colors.green, // opcional, puedes usar AppColors si tienes
+                  icon: Icons.check, // opcional
                 ),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cerrar'),
-              ),
+
+                const SizedBox(height: 10), // separación entre botones
+
+                ButtonR(
+                  text: 'Cerrar',
+                  onTap: () => Navigator.pop(context),
+                  color: Colors.grey, // opcional
+                  icon: Icons.close, // opcional
+                ),
+
             ],
           ),
         );
@@ -173,16 +183,11 @@ Future<List<MapPin>> fetchPinsFromSupabase() async {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _mbtiles = snapshot.data;
-            final metadata = _mbtiles!.getMetadata();
 
             return Column(
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Text(
-                    // Solo para desarrollo eliminar para produccion
-                    'MBTiles Name: ${metadata.name}, Format: ${metadata.format}',
-                  ),
                 ),
                 Expanded(
                   child: FlutterMap(

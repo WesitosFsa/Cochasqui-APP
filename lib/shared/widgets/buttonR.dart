@@ -4,22 +4,25 @@
 import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class ButtonR extends StatelessWidget {
-  bool? isResponsive;
-  double? width;
+  final bool? isResponsive;
+  final double? width;
   final VoidCallback? onTap;
-  String? text;
-  final bool showIcon; 
+  final String? text;
+  final bool showIcon;
+  final IconData? icon;
+  final Color? color; 
 
   // ignore: use_super_parameters
-  ButtonR({
+  const ButtonR({
     Key? key,
     this.width,
     this.isResponsive = false,
     this.onTap,
     this.text,
-    this.showIcon = true, 
+    this.showIcon = true,
+    this.icon,
+    this.color, 
   }) : super(key: key);
 
   @override
@@ -27,18 +30,19 @@ class ButtonR extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: width,
+        width: width ?? double.infinity,
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: AppColors.azulOscuro,
+          color: color ?? AppColors.azulOscuro,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (showIcon) Image.asset("assets/images/icono.png"), 
+            if (showIcon && icon != null)
+              Icon(icon, color: AppColors.blanco),
             if (text != null) ...[
-              if (showIcon) const SizedBox(width: 10),
+              if (showIcon && icon != null) const SizedBox(width: 10),
               Text(
                 text!,
                 style: const TextStyle(

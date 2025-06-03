@@ -1,3 +1,7 @@
+import 'package:cochasqui_park/shared/themes/colors.dart';
+import 'package:cochasqui_park/shared/widgets/DropdownCamp.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
+import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,22 +24,34 @@ class AddPinForm extends StatefulWidget {
 }
 
 class _AddPinFormState extends State<AddPinForm> {
-  @override
-  void initState() {
-    super.initState();
-    if (widget.existingPin != null) {
-      titleController.text = widget.existingPin!['title'] ?? '';
-      descController.text = widget.existingPin!['description'] ?? '';
-      selectedType = widget.existingPin!['type'];
-    }
-  }
-
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descController = TextEditingController();
   String? selectedType;
 
   final List<String> types = ['entrada', 'museo', 'pirámide', 'centro'];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingPin != null) {
+      titleController.text = widget.existingPin!['title'] ?? '';
+      descController.text = widget.existingPin!['description'] ?? '';
+      selectedType = normalizeType(widget.existingPin!['type']);
+    }
+  }
+  String? normalizeType(String? value) {
+    if (value == null) return null;
+    String normalize(String s) => s.toLowerCase().replaceAll('á', 'a').replaceAll('é', 'e').replaceAll('í', 'i').replaceAll('ó', 'o').replaceAll('ú', 'u');
+    final normalizedValue = normalize(value);
+    for (var type in types) {
+      if (normalize(type) == normalizedValue) {
+        return type;
+      }
+    }
+
+    return null; 
+  }
 
   Future<void> _savePin() async {
     if (!_formKey.currentState!.validate() || selectedType == null) return;
@@ -70,28 +86,17 @@ class _AddPinFormState extends State<AddPinForm> {
           runSpacing: 16,
           children: [
             Text('Añadir Pin en (${widget.lat.toStringAsFixed(5)}, ${widget.lng.toStringAsFixed(5)})'),
-            TextFormField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Título'),
-              validator: (value) => value!.isEmpty ? 'Requerido' : null,
-            ),
-            TextFormField(
-              controller: descController,
-              decoration: const InputDecoration(labelText: 'Descripción'),
-            ),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(labelText: 'Tipo'),
+            TextCamp(label: 'Título', controller: titleController),
+            TextCamp(label: 'Descripción', controller: descController),
+            DropdownCamp(
+              label: 'Tipo',
               value: selectedType,
-              items: types.map((type) {
-                return DropdownMenuItem(value: type, child: Text(type));
-              }).toList(),
+              items: types,
               onChanged: (value) => setState(() => selectedType = value),
               validator: (value) => value == null ? 'Selecciona un tipo' : null,
             ),
-            ElevatedButton(
-              onPressed: _savePin,
-              child: const Text('Guardar Pin'),
-            ),
+            ButtonR(onTap:_savePin,text: 'Guardar Pin',icon: Icons.save,color: AppColors.azulOscuro,),
+
           ],
         ),
       ),

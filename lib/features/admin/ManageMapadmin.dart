@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:cochasqui_park/features/admin/widgets/add_pin_form.dart';
+import 'package:cochasqui_park/shared/themes/colors.dart';
+import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
@@ -181,22 +183,26 @@ class _ManageMapadmin extends State<ManageMapadmin> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
+                  ButtonR(
+                    width: 150, 
+                    text: 'Editar',
+                    icon: Icons.edit,
+                    color: AppColors.azulMedio,
+                    onTap: () {
                       Navigator.pop(context);
                       _editPin(pin);
                     },
-                    icon: const Icon(Icons.edit),
-                    label: const Text('Editar'),
                   ),
-                  ElevatedButton.icon(
-                    onPressed: () => _deletePin(pin),
-                    icon: const Icon(Icons.delete),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    label: const Text('Eliminar'),
+
+                  ButtonR(
+                    width: 150, 
+                    text: 'Eliminar',
+                    icon: Icons.delete,
+                    color: AppColors.rojo,
+                    onTap: () => _deletePin(pin),
                   ),
+
+
                 ],
               ),
             ],
@@ -225,12 +231,10 @@ class _ManageMapadmin extends State<ManageMapadmin> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             _mbtiles = snapshot.data;
-            final metadata = _mbtiles!.getMetadata();
             return Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Text('MBTiles Name: ${metadata.name}, Format: ${metadata.format}'),
                 ),
                 Expanded(
                   child: FlutterMap(
