@@ -29,7 +29,7 @@ class _AddPinFormState extends State<AddPinForm> {
   final descController = TextEditingController();
   String? selectedType;
 
-  final List<String> types = ['entrada', 'museo', 'pirámide', 'centro'];
+  final List<String> types = ['entrada', 'museo', 'pirámide'];
 
   @override
   void initState() {

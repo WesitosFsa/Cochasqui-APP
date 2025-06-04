@@ -149,17 +149,17 @@ class _ManageMapadmin extends State<ManageMapadmin> {
   Widget getPinIcon(String type) {
     String asset;
     switch (type) {
-      case 'entrada':
-        asset = 'assets/images/pins/house_pin.png';
-        break;
-      case 'museo':
-        asset = 'assets/images/pins/house_pin.png';
-        break;
-      case 'pirámide':
-        asset = 'assets/images/pins/house_pin.png';
-        break;
-      default:
-        asset = 'assets/images/pins/house_pin.png';
+        case 'entrada':
+          asset = 'assets/images/pins/entrance_pin.png';
+          break;
+        case 'museo':
+          asset = 'assets/images/pins/museum_pin.png';
+          break;
+        case 'piramide':
+          asset = 'assets/images/pins/pyramid_pin.png';
+          break;
+        default:
+          asset = 'assets/images/pins/entrance_pin.png';
     }
     return Image.asset(asset, width: 40, height: 40);
   }

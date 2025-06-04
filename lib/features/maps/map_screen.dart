@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cochasqui_park/features/maps/map_controller.dart';
 import 'package:cochasqui_park/features/maps/widgets/map_pin.dart';
+import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -89,20 +90,20 @@ class _MapScreen extends State<MapScreen> {
   Widget getPinIcon(String type, {bool visited = false}) {
     String asset;
     if (visited) {
-      asset = 'assets/images/pins/visited_pin.png'; // usa otro ícono
+      asset = 'assets/images/pins/visited_pin.png'; 
     } else {
       switch (type) {
         case 'entrada':
-          asset = 'assets/images/pins/house_pin.png';
+          asset = 'assets/images/pins/entrance_pin.png';
           break;
         case 'museo':
-          asset = 'assets/images/pins/house_pin.png';
+          asset = 'assets/images/pins/museum_pin.png';
           break;
-        case 'pirámide':
-          asset = 'assets/images/pins/house_pin.png';
+        case 'piramide':
+          asset = 'assets/images/pins/pyramid_pin.png';
           break;
         default:
-          asset = 'assets/images/pins/house_pin.png';
+          asset = 'assets/images/pins/entrance_pin.png';
       }
     }
     return Image.asset(asset, width: 40, height: 40);
@@ -134,22 +135,22 @@ class _MapScreen extends State<MapScreen> {
                       'pin_id': pin.id,
                     });
                     Navigator.pop(context);
-                    _loadPins(); // recargar con el nuevo estado
+                    _loadPins(); 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Punto marcado como visitado')),
                     );
                   },
-                  color: Colors.green, // opcional, puedes usar AppColors si tienes
-                  icon: Icons.check, // opcional
+                  color: AppColors.verde, 
+                  icon: Icons.check, 
                 ),
 
-                const SizedBox(height: 10), // separación entre botones
+                const SizedBox(height: 10), 
 
                 ButtonR(
                   text: 'Cerrar',
                   onTap: () => Navigator.pop(context),
-                  color: Colors.grey, // opcional
-                  icon: Icons.close, // opcional
+                  color: Colors.grey, 
+                  icon: Icons.close, 
                 ),
 
             ],

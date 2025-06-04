@@ -37,6 +37,22 @@ class _WelcomeScreen extends State<WelcomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page?.round() ?? 0;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageView.builder(
@@ -66,37 +82,35 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      text_bold(text: slidertextotitulo[index]),
+                      text_bold(text: slidertextotitulo[index]), 
                       text_simple(
-                          text: slidertextosubtitulo[index],
+                          text: slidertextosubtitulo[index], 
                           color: Colors.blueGrey,
                           size: 30),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       // ignore: sized_box_for_whitespace
                       Container(
                         width: 250,
-                        child: text_simple(text: slidertexto[index]),
+                        child: text_simple(text: slidertexto[index]), 
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       ButtonR(
                         width: 120,
-                        icon: Icons.play_arrow,
-                        showIcon: _currentPage < 2,
-                        
-                        text: _currentPage < 2 ? null : "Empezar",
+                        icon: Icons.arrow_forward_rounded,
+                        showIcon: _currentPage < sliderimagenes.length - 1, 
+                        text: _currentPage < sliderimagenes.length - 1 ? null : "Empezar", 
                         onTap: () {
-                          if (_currentPage < 2) {
+                          if (_currentPage < sliderimagenes.length - 1) { 
                             _pageController.animateToPage(
                               _currentPage + 1,
-                              duration: Duration(milliseconds: 400),
+                              duration: const Duration(milliseconds: 400),
                               curve: Curves.easeInOut,
                             );
-                          } else {
-                            
+                          } else { 
                             Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => LoginScreen()),
-                             );
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );
                           }
                         },
                       ),
@@ -109,16 +123,17 @@ class _WelcomeScreen extends State<WelcomeScreen> {
                     margin: const EdgeInsets.only(bottom: 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(3, (indexDots) {
-                        return Container(
+                      children: List.generate(sliderimagenes.length, (indexDots) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 300), 
                           margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 8,
-                          height: _currentPage == indexDots ? 25 : 8,
+                          width: _currentPage == indexDots ? 20 : 8, 
+                          height: 8,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: _currentPage == indexDots
-                                ? Colors.black
-                                : const Color.fromARGB(158, 48, 48, 48),
+                                ? Colors.black 
+                                : const Color.fromARGB(158, 48, 48, 48), 
                           ),
                         );
                       }),

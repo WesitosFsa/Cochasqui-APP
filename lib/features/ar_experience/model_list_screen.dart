@@ -20,7 +20,6 @@ class _ModelListScreenState extends State<ModelListScreen>
   final categories = [
     'pirámides',
     'museo',
-    'camping'
   ]; // Las categorías que quieres mostrar
 
   @override
