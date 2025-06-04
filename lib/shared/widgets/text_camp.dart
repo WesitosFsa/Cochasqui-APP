@@ -12,7 +12,7 @@ class TextCamp extends StatefulWidget {
   final ValueChanged<String>? onSubmitted;
   final String? errorText;
   final bool passwordView;
-
+  final bool readType;
   const TextCamp({
     super.key,
     required this.label,
@@ -25,6 +25,7 @@ class TextCamp extends StatefulWidget {
     this.onSubmitted,
     this.errorText,
     this.passwordView = false,
+    this.readType = false,
   });
 
   @override
@@ -48,6 +49,7 @@ class _TextCampState extends State<TextCamp> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isReadType = widget.readType;
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscure,
@@ -55,14 +57,17 @@ class _TextCampState extends State<TextCamp> {
       enabled: widget.enabled,
       onTap: widget.onTap,
       onFieldSubmitted: widget.onSubmitted,
+      cursorColor: isReadType ? Colors.white : Colors.black,
       decoration: InputDecoration(
         labelText: widget.label,
         border: const OutlineInputBorder(),
         
-        focusedBorder: OutlineInputBorder( // Cambia el color al enfocar
-        borderSide: BorderSide(color: AppColors.azulMedio), // Cambia a tu color desead
+        focusedBorder: OutlineInputBorder( 
+        borderSide: BorderSide(color: AppColors.azulMedio), 
         
         ),
+        fillColor: isReadType ? const Color.fromARGB(115, 160, 160, 160) : null,
+        filled: isReadType,
       
         
         

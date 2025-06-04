@@ -5,20 +5,27 @@ class DropdownCamp extends StatelessWidget {
   final String label;
   final String? value;
   final List<String> items;
-  final ValueChanged<String?> onChanged;
+  final ValueChanged<String?>? onChanged;
   final String? Function(String?)? validator;
+  final bool readType;
+  final bool readOnly;
 
   const DropdownCamp({
     super.key,
     required this.label,
     required this.value,
     required this.items,
-    required this.onChanged,
+    this.onChanged,
     this.validator,
+    this.readType = false,
+    this.readOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bool isReadType = readType;
+    final bool isReadOnly = readOnly;
+
     return DropdownButtonFormField<String>(
       value: value,
       decoration: InputDecoration(
@@ -27,6 +34,8 @@ class DropdownCamp extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.azulMedio),
         ),
+        fillColor: isReadType || isReadOnly ? const Color.fromARGB(115, 160, 160, 160) : null,
+        filled: isReadType || isReadOnly,
       ),
       items: items.map((item) {
         return DropdownMenuItem<String>(
@@ -34,7 +43,7 @@ class DropdownCamp extends StatelessWidget {
           child: Text(item),
         );
       }).toList(),
-      onChanged: onChanged,
+      onChanged: isReadOnly ? null : onChanged,
       validator: validator,
     );
   }
