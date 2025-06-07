@@ -7,6 +7,7 @@ class UserModel {
   final String? apellido;
   final DateTime? fechaNacimiento;
   final String? genero;
+  final String? rol;
 
   UserModel({
     required this.id,
@@ -15,7 +16,9 @@ class UserModel {
     this.apellido,
     this.fechaNacimiento,
     this.genero,
+    this.rol
   });
+
 }
 
 class UserProvider with ChangeNotifier {

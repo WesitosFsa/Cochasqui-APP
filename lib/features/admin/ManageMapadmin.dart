@@ -224,7 +224,7 @@ class _ManageMapadmin extends State<ManageMapadmin> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Mapa del Parque Cochasqui'),
+        title: const Text('Administrar puntos del parque'),
       ),
       body: FutureBuilder<MbTiles>(
         future: _futureMbtiles,
