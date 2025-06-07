@@ -8,7 +8,7 @@ class UserModel {
   final DateTime? fechaNacimiento;
   final String? genero;
   final String? rol;
-
+  final String? avatarUrl; 
   UserModel({
     required this.id,
     required this.email,
@@ -16,7 +16,8 @@ class UserModel {
     this.apellido,
     this.fechaNacimiento,
     this.genero,
-    this.rol
+    this.rol,
+    this.avatarUrl,
   });
 
 }

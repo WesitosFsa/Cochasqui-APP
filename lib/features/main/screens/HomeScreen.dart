@@ -4,6 +4,7 @@ import 'package:cochasqui_park/shared/widgets/fonts.dart';
 import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart'; // ¡Importar Supabase aquí!
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,13 +23,12 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: no_leading_underscores_for_local_identifiers
+    final userProvider = Provider.of<UserProvider>(context);
+    final currentUser = userProvider.user;
     TabController _tabController = TabController(length: 3, vsync: this);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final isTablet = screenWidth >
-        600; 
-
+    final isTablet = screenWidth > 600;
     return Scaffold(
       backgroundColor: const Color(0xFFECEBE9),
       drawer: Drawer(
@@ -45,14 +45,15 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Cerrar sesión'),
-              onTap: () {
+              onTap: () async {
                 final userProvider =
                     Provider.of<UserProvider>(context, listen: false);
-                userProvider.clearUser(); 
+                await Supabase.instance.client.auth.signOut();
+                userProvider.clearUser();
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false, 
+                  (route) => false,
                 );
               },
             ),
@@ -65,8 +66,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
           children: [
             Padding(
               padding: EdgeInsets.only(
-                  top: screenHeight * 0.07,
-                  left: screenWidth * 0.05), 
+                  top: screenHeight * 0.07, left: screenWidth * 0.05),
               child: Row(
                 children: [
                   Builder(
@@ -81,30 +81,36 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                   const Expanded(child: SizedBox()),
                   Container(
                     margin: const EdgeInsets.only(right: 20),
-                    width: screenWidth *
-                        0.13, 
-                    height: screenWidth *
-                        0.13, 
+                    width: screenWidth * 0.13,
+                    height: screenWidth * 0.13,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.grey,
                     ),
+                    child: currentUser?.avatarUrl != null
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              currentUser!.avatarUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.person,
+                                    size: 40, color: Colors.white);
+                              },
+                            ),
+                          )
+                        : const Icon(Icons.person,
+                            size: 40, color: Colors.white),
                   )
                 ],
               ),
             ),
-
-            SizedBox(
-                height: screenHeight *
-                    0.03), 
+            SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: EdgeInsets.only(left: screenWidth * 0.05),
-              child: text_bold(
-                  text: 'Bienvenido',
-                  size: isTablet ? 24 : 20),
+              child: text_bold(text: 'Bienvenido', size: isTablet ? 24 : 20),
             ),
             SizedBox(height: screenHeight * 0.025),
-
             TabBar(
               controller: _tabController,
               labelColor: Colors.black,
@@ -118,10 +124,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 Tab(text: 'Camping'),
               ],
             ),
-
             SizedBox(
-              height: screenHeight *
-                  0.35, 
+              height: screenHeight * 0.35,
               width: double.infinity,
               child: TabBarView(
                 controller: _tabController,
@@ -135,8 +139,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             right: screenWidth * 0.04,
                             top: screenHeight * 0.015,
                             left: screenWidth * 0.04),
-                        width: screenWidth *
-                            0.55, 
+                        width: screenWidth * 0.55,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: Colors.white,
@@ -153,7 +156,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 ],
               ),
             ),
-
             SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
@@ -166,7 +168,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
             SizedBox(height: screenHeight * 0.012),
-
             SizedBox(
               height: screenHeight * (isTablet ? 0.40 : 0.25),
               width: double.infinity,
@@ -189,7 +190,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(20),
                             color: Colors.white,
                             image: DecorationImage(
-                              // ignore: prefer_interpolation_to_compose_strings
                               image: AssetImage('assets/images/' +
                                   imagenes.keys.elementAt(index)),
                               fit: BoxFit.contain,

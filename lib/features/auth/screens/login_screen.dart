@@ -72,6 +72,7 @@ class _LoginScreen extends State<LoginScreen> {
             : null,
         genero: profileData['genero'],
         rol: profileData['rol'],
+        avatarUrl: profileData['avatar_url'], 
       ));
 
       final rol = profileData['rol'] ?? 'usuario';

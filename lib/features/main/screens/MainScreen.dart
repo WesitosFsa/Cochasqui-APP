@@ -19,7 +19,7 @@ class _MainScreen extends State<MainScreen> {
     HomeScreen(),
     const ModelListLoaderScreen(),
     MapScreen(),
-    FeedbackScreen()
+    ProfileScreen()
     
   ];
   int currentIndex=0;
@@ -41,12 +41,12 @@ class _MainScreen extends State<MainScreen> {
         currentIndex: currentIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: const Color.fromARGB(185, 109, 109, 109),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         elevation: 0,
         items:[
           BottomNavigationBarItem(label: "Menu",icon: Icon(Icons.dashboard_customize)),
-          BottomNavigationBarItem(label: "MuseoAR",icon: Icon(Icons.view_in_ar)),
+          BottomNavigationBarItem(label: "AR",icon: Icon(Icons.view_in_ar)),
           BottomNavigationBarItem(label: "Mapa",icon: Icon(Icons.map)),
           BottomNavigationBarItem(label: "Perfil",icon: Icon(Icons.person)),
         ]
