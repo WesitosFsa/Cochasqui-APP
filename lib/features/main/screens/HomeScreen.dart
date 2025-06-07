@@ -190,8 +190,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(20),
                             color: Colors.white,
                             image: DecorationImage(
-                              image: AssetImage('assets/images/' +
-                                  imagenes.keys.elementAt(index)),
+                              image: AssetImage('assets/images/${imagenes.keys.elementAt(index)}'),
                               fit: BoxFit.contain,
                             ),
                           ),

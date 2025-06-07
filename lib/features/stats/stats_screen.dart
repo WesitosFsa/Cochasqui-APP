@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+// ignore: use_key_in_widget_constructors
 class EstadisticasScreen extends StatefulWidget {
   @override
+  // ignore: library_private_types_in_public_api
   _EstadisticasScreenState createState() => _EstadisticasScreenState();
 }
 
@@ -159,6 +161,7 @@ class _EstadisticasScreenState extends State<EstadisticasScreen> {
           return PieChartSectionData(
             color: colors[i % colors.length],
             value: e.value.toDouble(),
+            // ignore: unnecessary_brace_in_string_interps
             title: '${percent}%',
             radius: 60,
             titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),

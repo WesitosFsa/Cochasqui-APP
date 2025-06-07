@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,6 +21,7 @@ Future<void> subirImagen(BuildContext context) async {
   final file = File(pickedFile.path);
 
   try {
+    // ignore: unused_local_variable
     final response = await Supabase.instance.client.storage
         .from('avatars')
         .upload(filePath, file, fileOptions: FileOptions(upsert: true));

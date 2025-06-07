@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FeedbackScreen extends StatefulWidget {
+  // ignore: use_super_parameters
   const FeedbackScreen({Key? key}) : super(key: key);
 
   @override
