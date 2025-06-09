@@ -1,7 +1,7 @@
 import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:cochasqui_park/shared/widgets/DropdownCamp.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
-import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart'; // Asumo que UserProvider está aquí
+import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart'; 
 import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
 import 'package:cochasqui_park/shared/widgets/text_camp.dart';
 import 'package:flutter/material.dart';
@@ -211,8 +211,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               CircleAvatar(
                 radius: 50,
                 backgroundImage: _imagenSeleccionada != null
-                    ? NetworkImage(_imagenSeleccionada!)
+                    ? NetworkImage('${_imagenSeleccionada!}?t=${DateTime.now().millisecondsSinceEpoch}')
                     : const AssetImage('assets/images/profile.png') as ImageProvider,
+
                 backgroundColor: Colors.grey[300],
               ),
               if (_isEditing) 
@@ -275,7 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _generoSeleccionado = newValue;
                     });
                   }
-                : (_) {}, // Deshabilita el onChanged si no está editando
+                : (_) {}, 
             readType: !_isEditing,
             readOnly: !_isEditing,
           ),

@@ -21,14 +21,15 @@ Future<void> subirImagen(BuildContext context) async {
   final file = File(pickedFile.path);
 
   try {
-    // ignore: unused_local_variable
-    final response = await Supabase.instance.client.storage
+    await Supabase.instance.client.storage
         .from('avatars')
         .upload(filePath, file, fileOptions: FileOptions(upsert: true));
 
+    // ignore: prefer_interpolation_to_compose_strings
     final imageUrl = Supabase.instance.client.storage
         .from('avatars')
-        .getPublicUrl(filePath);
+        .getPublicUrl(filePath) +
+        '?t=${DateTime.now().millisecondsSinceEpoch}';
 
     await Supabase.instance.client
         .from('profiles')
@@ -36,7 +37,7 @@ Future<void> subirImagen(BuildContext context) async {
         .eq('id', userId);
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Imagen de perfil actualizada')),
+      const SnackBar(content: Text('Imagen de perfil actualizada')),
     );
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
