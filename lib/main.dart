@@ -1,14 +1,23 @@
-import 'package:cochasqui_park/core/config.dart';
+// Importa el archivo de configuración de PowerSync
+import 'package:cochasqui_park/core/powersync/powersync.dart';
+import 'package:cochasqui_park/core/supabase/supabase.dart';
 import 'package:cochasqui_park/features/main/screens/welcome_screen.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
-  await SupabaseConfig.init(); 
+  // Asegura que los bindings de Flutter estén inicializados antes de cualquier llamada asíncrona
+  WidgetsFlutterBinding.ensureInitialized();
 
-   runApp(
+  // 1. Inicializa Supabase primero
+  await loadSupabase();
+
+  // 2. Luego, inicializa PowerSync.
+  // Esto conectará PowerSync y configurará los listeners de autenticación de Supabase.
+  await openDatabase();
+
+  runApp(
     ChangeNotifierProvider(
       create: (_) => UserProvider(),
       child: MyApp(),
@@ -17,8 +26,8 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,9 +37,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: WelcomeScreen(),
-      
     );
   }
 }
-
-
