@@ -10,11 +10,8 @@ void main() async {
   // Asegura que los bindings de Flutter estén inicializados antes de cualquier llamada asíncrona
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Inicializa Supabase primero
   await loadSupabase();
 
-  // 2. Luego, inicializa PowerSync.
-  // Esto conectará PowerSync y configurará los listeners de autenticación de Supabase.
   await openDatabase();
 
   runApp(

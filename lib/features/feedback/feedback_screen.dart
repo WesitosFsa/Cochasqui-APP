@@ -1,8 +1,8 @@
+import 'package:cochasqui_park/core/powersync/powersync.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FeedbackScreen extends StatefulWidget {
-  // ignore: use_super_parameters
   const FeedbackScreen({Key? key}) : super(key: key);
 
   @override
@@ -18,17 +18,33 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     final mensaje = _mensajeController.text.trim();
     final user = Supabase.instance.client.auth.currentUser;
 
-    if (mensaje.isEmpty || user == null) return;
+    debugPrint('Intentando enviar feedback...');
+    debugPrint('Mensaje: "$mensaje"');
+    debugPrint('Usuario: ${user?.id}');
+
+    if (mensaje.isEmpty || user == null) {
+      debugPrint('Mensaje vacío o usuario no autenticado');
+      return;
+    }
 
     setState(() {
       _enviando = true;
     });
 
     try {
-      await Supabase.instance.client.from('feedback').insert({
-        'user_id': user.id,
-        'mensaje': mensaje,
-      });
+      final idGenerado = '${DateTime.now().millisecondsSinceEpoch}_${user.id}';
+      debugPrint('ID generado para feedback: $idGenerado');
+
+      await db.execute('''
+        INSERT INTO feedback(id, user_id, mensaje)
+        VALUES(?, ?, ?)
+      ''', [
+        idGenerado,
+        user.id,
+        mensaje,
+      ]);
+
+      debugPrint('Feedback insertado exitosamente');
 
       _mensajeController.clear();
 
@@ -37,6 +53,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         const SnackBar(content: Text('¡Gracias por tu retroalimentación!')),
       );
     } catch (e) {
+      debugPrint('Error al insertar feedback: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al enviar: $e')),
@@ -62,7 +79,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       appBar: AppBar(
         title: const Text('Enviar retroalimentación'),
       ),
-      body: SingleChildScrollView( // <--- Added SingleChildScrollView here
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(

@@ -145,7 +145,7 @@ String? getUserId() {
 }
 
 Future<String> getDatabasePath() async {
-  const dbFilename = 'powersync-demo.db';
+  const dbFilename = 'cochasqui_database.db';
   // getApplicationSupportDirectory is not supported on Web
   if (kIsWeb) {
     return dbFilename;
@@ -187,8 +187,6 @@ Future<void> openDatabase() async {
     }
   });
 
-  // Demostración usando SQLite Full-Text Search con PowerSync.
-  // Ver https://docs.powersync.com/usage-examples/full-text-search para más detalles
   await configureFts(db);
 }
 
