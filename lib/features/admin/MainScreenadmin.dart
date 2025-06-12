@@ -1,7 +1,7 @@
 import 'package:cochasqui_park/features/admin/ManageARadmin.dart';
 import 'package:cochasqui_park/features/admin/ManageMapadmin.dart';
 import 'package:cochasqui_park/features/admin/admin_feedback_screen.dart';
-import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
+import 'package:cochasqui_park/features/feedback/feedback_screen.dart';
 import 'package:cochasqui_park/features/main/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,7 @@ class _MainScreenAdmin extends State<MainScreenAdmin> {
   int currentIndex = 0;
 
   final List screens = [
-    HomeScreen(),
+    FeedbackScreen(),
     ManageARadmin(),
     ManageMapadmin(),
     AdminFeedbackScreen(),
