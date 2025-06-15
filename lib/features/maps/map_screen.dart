@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cochasqui_park/features/maps/map_controller.dart';
 import 'package:cochasqui_park/features/maps/widgets/map_pin.dart';
 import 'package:cochasqui_park/features/maps/widgets/watch_map_pins.dart';
@@ -14,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cochasqui_park/core/powersync/powersync.dart';
 // ignore: depend_on_referenced_packages
 import 'package:uuid/uuid.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -26,6 +28,8 @@ class _MapScreen extends State<MapScreen> {
   final Future<MbTiles> _futureMbtiles = _initMbtiles();
   MbTiles? _mbtiles;
   LatLng? _currentPosition;
+  bool _isConnected = true;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   StreamSubscription<Position>? _positionStream;
 
   final uuid = const Uuid(); 
@@ -39,6 +43,35 @@ class _MapScreen extends State<MapScreen> {
   void initState() {
     super.initState();
     _startListeningPosition();
+    _checkInitialConnectivity();
+    _setupConnectivityListener();
+
+  }
+  Future<void> _checkInitialConnectivity() async {
+    final connectivityResult = await (Connectivity().checkConnectivity());
+    _updateConnectivityStatus(connectivityResult);
+  }
+
+  void _setupConnectivityListener() {
+
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) {
+      _updateConnectivityStatus(results);
+    });
+  }
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
+
+    final hasConnection = results.contains(ConnectivityResult.mobile) ||
+        results.contains(ConnectivityResult.wifi) ||
+        results.contains(ConnectivityResult.ethernet) ||
+        results.contains(ConnectivityResult.bluetooth);
+
+    if (_isConnected != hasConnection) {
+      setState(() {
+        _isConnected = hasConnection;
+      });
+    }
   }
 
   Future<void> _startListeningPosition() async {
@@ -75,6 +108,7 @@ class _MapScreen extends State<MapScreen> {
   void dispose() {
     _mbtiles?.dispose();
     _positionStream?.cancel();
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -186,6 +220,16 @@ class _MapScreen extends State<MapScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('Mapa del Parque Cochasqui'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Icon(
+              _isConnected ? Icons.cloud : Icons.cloud_off,
+              color: _isConnected ? Colors.grey : Colors.red.shade700,
+              size: 28,
+            ),
+          ),
+        ],
       ),
       body: FutureBuilder<MbTiles>(
         future: _futureMbtiles,

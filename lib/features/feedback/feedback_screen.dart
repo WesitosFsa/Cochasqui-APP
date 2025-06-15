@@ -53,7 +53,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       setState(() {
         _isConnected = hasConnection;
       });
-      debugPrint('Estado de conexión actualizado: $_isConnected');
     }
   }
 
