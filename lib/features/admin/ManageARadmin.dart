@@ -46,7 +46,7 @@ class _ManageARadminState extends State<ManageARadmin> {
   };
   void _resetForm() {
     _formKey.currentState
-        ?.reset(); // Reinicia el estado del formulario de forma segura
+        ?.reset(); 
     nameController.clear();
     descController.clear();
     riddleController.clear();
@@ -196,7 +196,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                           setState(() {
                             selectedCategory = value;
                             selectedKey =
-                                null; // Reiniciar clave cuando la categoría cambia
+                                null; 
                           });
                         },
                       ),
@@ -240,7 +240,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                           child: CircularProgressIndicator(
-                              color: Colors.white)); // Color para el spinner
+                              color: Colors.white));
                     }
                     if (snapshot.hasError) {
                       return Center(
@@ -259,7 +259,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                         final model = models[index];
                         return Card(
                           color: Colors.grey[
-                              850], // Fondo oscuro para las tarjetas de la lista
+                              850], 
                           margin: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 0),
                           child: ListTile(
@@ -285,7 +285,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                                       selectedCategory = model['category'];
                                       selectedKey = model['key'];
                                       currentView =
-                                          'edit'; // Cambiar a la vista de edición
+                                          'edit'; 
                                     });
                                   },
                                 ),
@@ -304,7 +304,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                                               content: Text(
                                                   'Modelo eliminado exitosamente')));
                                       setState(
-                                          () {}); // Actualizar la lista después de eliminar
+                                          () {}); 
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(

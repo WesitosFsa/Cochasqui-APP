@@ -1,11 +1,11 @@
 import 'package:cochasqui_park/core/powersync/powersync.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:connectivity_plus/connectivity_plus.dart'; // Importa el paquete de conectividad
-import 'dart:async'; // Necesario para StreamSubscription
+import 'package:connectivity_plus/connectivity_plus.dart'; 
+import 'dart:async'; 
 
 class FeedbackScreen extends StatefulWidget {
-  // Se usa 'super.key' para la propiedad Key en el constructor
+ 
   const FeedbackScreen({super.key});
 
   @override
@@ -16,29 +16,25 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   final _mensajeController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _enviando = false;
-  bool _isConnected = true; // Estado inicial: asumimos que hay conexión
-  // Se ha revertido a StreamSubscription<List<ConnectivityResult>>
-  // ya que Connectivity().onConnectivityChanged emite List<ConnectivityResult>.
+  bool _isConnected = true; 
+
   late StreamSubscription<List<ConnectivityResult>>
-      _connectivitySubscription; // Suscripción para escuchar cambios de red
+      _connectivitySubscription; 
 
   @override
   void initState() {
     super.initState();
-    _checkInitialConnectivity(); // Comprueba el estado de red al iniciar la pantalla
-    _setupConnectivityListener(); // Configura el listener para cambios de red
+    _checkInitialConnectivity(); 
+    _setupConnectivityListener(); 
   }
 
-  // Comprueba el estado inicial de la conectividad
   Future<void> _checkInitialConnectivity() async {
-    // checkConnectivity() devuelve una List<ConnectivityResult>
     final connectivityResult = await (Connectivity().checkConnectivity());
     _updateConnectivityStatus(connectivityResult);
   }
 
-  // Configura el listener para detectar cambios en la conectividad
   void _setupConnectivityListener() {
-    // onConnectivityChanged.listen() emite List<ConnectivityResult>
+
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {
@@ -46,11 +42,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     });
   }
 
-  // Actualiza el estado de conectividad en base a los resultados
-  // El parámetro 'results' es una List<ConnectivityResult>.
   void _updateConnectivityStatus(List<ConnectivityResult> results) {
-    // Si la lista de resultados contiene cualquier tipo de conexión (mobile, wifi, ethernet, bluetooth), se considera conectado.
-    // Si solo contiene none o está vacía, se considera desconectado.
+
     final hasConnection = results.contains(ConnectivityResult.mobile) ||
         results.contains(ConnectivityResult.wifi) ||
         results.contains(ConnectivityResult.ethernet) ||
@@ -72,9 +65,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     debugPrint('Mensaje: "$mensaje"');
     debugPrint('Usuario: ${user?.id}');
 
-    // NOTA: Se ha eliminado la verificación de _isConnected aquí,
-    // permitiendo el envío offline. La notificación de "No hay conexión"
-    // se maneja en el icono de la AppBar.
 
     if (mensaje.isEmpty || user == null) {
       debugPrint('Mensaje vacío o usuario no autenticado');
@@ -125,7 +115,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   void dispose() {
     _mensajeController.dispose();
     _connectivitySubscription
-        .cancel(); // Cancela la suscripción del listener para evitar fugas de memoria
+        .cancel(); 
     super.dispose();
   }
 
@@ -135,16 +125,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       appBar: AppBar(
         title: const Text('Retroalimentación'),
         actions: [
-          // Muestra un icono diferente según el estado de conexión
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Icon(
               _isConnected
                   ? Icons.cloud
-                  : Icons.cloud_off, // Cambia el icono según la conexión
+                  : Icons.cloud_off,
               color: _isConnected
                   ? Colors.grey
-                  : Colors.red.shade700, // Negro si hay conexión, rojo si no
+                  : Colors.red.shade700, 
               size: 28.0,
             ),
           ),
@@ -179,8 +168,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  // El botón ahora solo se deshabilita si se está enviando (_enviando es true)
-                  // No se deshabilita por el estado de conexión para permitir el modo offline.
                   onPressed: _enviando
                       ? null
                       : () {

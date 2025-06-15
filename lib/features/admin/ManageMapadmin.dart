@@ -82,9 +82,9 @@ class _ManageMapadmin extends State<ManageMapadmin> {
       await Supabase.instance.client
           .from('map_pins')
           .delete()
-          .eq('id', pin.id); // asegúrate de que el modelo MapPin tenga un campo `id`
+          .eq('id', pin.id); 
 
-      _loadPins(); // recarga los pines
+      _loadPins(); 
     }
   }
 

@@ -44,7 +44,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
         _message = "Contraseña cambiada correctamente";
       });
 
-      Navigator.popUntil(context, (route) => route.isFirst); // Vuelve al login
+      Navigator.popUntil(context, (route) => route.isFirst); 
     } catch (e) {
       setState(() {
         _message = "Código inválido o error al cambiar la contraseña";

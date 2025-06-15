@@ -32,7 +32,7 @@ class _RegisterScreen extends State<RegisterScreen> {
 
   return showDialog(
     context: context,
-    barrierDismissible: false, // no cerrar tocando afuera
+    barrierDismissible: false, 
     builder: (context) {
       return StatefulBuilder(
         
@@ -49,7 +49,6 @@ class _RegisterScreen extends State<RegisterScreen> {
             }
 
             try {
-              // Intentar verificar OTP
               await Supabase.instance.client.auth.verifyOTP(
                 email: email,
                 token: code,
@@ -127,7 +126,6 @@ class _RegisterScreen extends State<RegisterScreen> {
       final response = await AuthService().signUp(email, password);
 
       if (response.user != null || response.session == null) {
-        // Aquí mostramos el dialog para ingresar el código de verificación
         await _showVerificationDialog(context, email);
       } else {
         setState(() {

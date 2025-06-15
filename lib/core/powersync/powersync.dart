@@ -147,7 +147,7 @@ String? getUserId() {
 }
 
 Future<String> getDatabasePath() async {
-  const dbFilename = 'cochasqui_database.db';
+  const dbFilename = 'cochasqui_base_de_datos.db';
   // getApplicationSupportDirectory is not supported on Web
   if (kIsWeb) {
     return dbFilename;

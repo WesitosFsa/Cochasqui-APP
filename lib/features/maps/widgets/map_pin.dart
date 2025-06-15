@@ -6,7 +6,7 @@ class MapPin {
   final String title;
   final String description;
   final String type;
-  final bool visited; // nuevo
+  final bool visited; 
 
   MapPin({
     required this.id,
@@ -19,11 +19,14 @@ class MapPin {
 
   factory MapPin.fromMap(Map<String, dynamic> map, {bool visited = false}) {
     return MapPin(
-      id: map['id'],
-      location: LatLng(map['latitude'], map['longitude']),
-      title: map['title'],
-      description: map['description'] ?? '',
-      type: map['type'] ?? '',
+      id: map['id'] as int, 
+      location: LatLng(
+        map['latitude'] as double, 
+        map['longitude'] as double,
+      ),
+      title: map['title'] as String, 
+      description: map['description'] as String? ?? '', 
+      type: map['type'] as String? ?? '', 
       visited: visited,
     );
   }

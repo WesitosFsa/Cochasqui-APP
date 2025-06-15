@@ -55,7 +55,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Respuesta incorrecta, intenta de nuevo')),
       );
-      setState(() => scannedCode = null); // Permitir reintentar
+      setState(() => scannedCode = null); 
     }
   }
 
@@ -76,12 +76,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
         child: Stack(
           children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Usa spaceBetween para empujar el contenido arriba y abajo
-              crossAxisAlignment: CrossAxisAlignment.stretch, // Estirar horizontalmente
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch, 
               children: [
-                // 👉 adivinanza SIEMPRE visible arriba
+  
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 20.0), // Se añadió padding superior
+                  padding: const EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 20.0), 
                   child: Text(
                     widget.model.riddle,
                     style: const TextStyle(
@@ -94,8 +94,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // 👉 escáner
-                Center( // Centrar el escáner horizontalmente
+     
+                Center( 
                   child: Container(
                     width: 250,
                     height: 250,
@@ -118,9 +118,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
 
                 const SizedBox(height: 20),
 
-                // 👉 mostrar el QR escaneado (si hay)
                 if (scannedCode != null) ...[
-                  const Center(child: Icon(Icons.qr_code, size: 80, color: Colors.white)), // Icono centrado
+                  const Center(child: Icon(Icons.qr_code, size: 80, color: Colors.white)), 
                   const SizedBox(height: 10),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -136,11 +135,10 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                     ),
                   ),
                 ],
-                const Spacer(), // Empuja el contenido de arriba hacia arriba
+                const Spacer(), 
               ],
             ),
 
-            // 👉 botón responder abajo
             Positioned(
               bottom: 60,
               left: 30,

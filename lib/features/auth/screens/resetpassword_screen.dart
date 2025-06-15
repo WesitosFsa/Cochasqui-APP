@@ -53,10 +53,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFECEBE9),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFECEBE9), // Mismo color que el fondo
-        elevation: 0, // Sin sombra para que se vea plano
-        title: text_bold(text: "Recuperar contraseña", size: 20), // Título con tu estilo personalizado
-        iconTheme: const IconThemeData(color: Colors.black), // Cambia el color del ícono de retroceso si es necesario
+        backgroundColor: const Color(0xFFECEBE9), 
+        elevation: 0, 
+        title: text_bold(text: "Recuperar contraseña", size: 20), 
+        iconTheme: const IconThemeData(color: Colors.black), 
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),

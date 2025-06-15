@@ -33,7 +33,6 @@ class ARModel {
   String get imagePath => "assets/AR/images/$key.jpg";
   String get gltfPath => "assets/AR/models/$key.gltf";
 
-  // Aquí te hace falta un método copyWith para poder cambiar unlocked sin perder datos:
   ARModel copyWith({bool? unlocked}) {
     return ARModel(
       id: id,

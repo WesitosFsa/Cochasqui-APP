@@ -16,7 +16,7 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
   final nombreController = TextEditingController();
   final apellidoController = TextEditingController();
   final fechaNacimientoController =
-      TextEditingController(); // Nuevo controlador para la fecha
+      TextEditingController(); 
   String? genero;
   bool aceptoTerminos = false;
   List<Widget> pasosRegistro(BuildContext context) => [
@@ -43,7 +43,7 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
           controller: fechaNacimientoController,
           readOnly: true,
           suffixIcon: Icon(
-              Icons.calendar_today), // Hace que el campo sea de solo lectura
+              Icons.calendar_today), 
           onTap: () async {
             final picked = await showDatePicker(
               context: context,

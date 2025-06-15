@@ -51,7 +51,7 @@ class _AdminFeedbackScreenState extends State<AdminFeedbackScreen> {
           .update({'leido': true})
           .eq('id', id);
 
-      cargarFeedback(); // recargar para reflejar el cambio
+      cargarFeedback(); 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al marcar como leído: $e')),
