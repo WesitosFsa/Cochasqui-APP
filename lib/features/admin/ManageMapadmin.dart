@@ -47,8 +47,8 @@ class _ManageMapadmin extends State<ManageMapadmin> {
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: AddPinForm(
-          lat: pin.location.latitude,
-          lng: pin.location.longitude,
+          latitude: pin.location.latitude,
+          longitude: pin.location.longitude,
           existingPin: pin.toMap(), 
           onSave: () {
             Navigator.pop(context);
@@ -135,8 +135,8 @@ class _ManageMapadmin extends State<ManageMapadmin> {
       builder: (context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: AddPinForm(
-          lat: latlng.latitude,
-          lng: latlng.longitude,
+          latitude: latlng.latitude,
+          longitude: latlng.longitude,
           onSave: () {
             Navigator.pop(context);
             _loadPins();

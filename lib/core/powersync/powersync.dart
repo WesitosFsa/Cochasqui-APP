@@ -4,7 +4,9 @@ import 'package:cochasqui_park/core/powersync/migrations/fts_setup.dart';
 import 'package:cochasqui_park/core/powersync/schema.dart';
 // Mantén esta importación si 'loadSupabase' u otras funciones de Supabase se usaban aquí
 import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
 import 'package:logging/logging.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:powersync/powersync.dart';

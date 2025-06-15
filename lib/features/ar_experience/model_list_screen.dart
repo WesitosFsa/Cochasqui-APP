@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:cochasqui_park/features/ar_experience/models/ARModel.dart';
+import 'package:cochasqui_park/features/ar_experience/museum_screen.dart';
 import 'package:cochasqui_park/features/ar_experience/qr_scanner.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'museum_screen.dart'; // La pantalla donde se visualiza el modelo en AR
 
 class ModelListScreen extends StatefulWidget {
-  final List<ARModel>
-      models; // Aquí llegan tus modelos desde la BDD o una lista local
+  final List<ARModel> models;
 
   const ModelListScreen({super.key, required this.models});
 
@@ -16,27 +18,66 @@ class ModelListScreen extends StatefulWidget {
 class _ModelListScreenState extends State<ModelListScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  bool _isConnected = true;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
 
-  final categories = [
-    'pirámides',
-    'museo',
-  ]; // Las categorías que quieres mostrar
+  final categories = ['pirámides', 'museo'];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: categories.length, vsync: this);
+    _checkInitialConnectivity();
+    _setupConnectivityListener();
+  }
+
+  Future<void> _checkInitialConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    _updateConnectivityStatus(connectivityResult);
+  }
+
+  void _setupConnectivityListener() {
+    _connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen(_updateConnectivityStatus);
+  }
+
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
+    final hasConnection = results.any((result) =>
+        result == ConnectivityResult.mobile ||
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet ||
+        result == ConnectivityResult.bluetooth);
+
+    if (_isConnected != hasConnection) {
+      setState(() {
+        _isConnected = hasConnection;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    // ignore: unused_local_variable
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Modelos en AR"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Icon(
+              _isConnected ? Icons.cloud : Icons.cloud_off,
+              color: _isConnected ? Colors.grey : Colors.red.shade700,
+              size: 28,
+            ),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -46,90 +87,38 @@ class _ModelListScreenState extends State<ModelListScreen>
       body: TabBarView(
         controller: _tabController,
         children: categories.map((category) {
-          // Filtrar los modelos por categoría
           final filtered =
               widget.models.where((m) => m.category == category).toList();
-
           return ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: filtered.length,
             itemBuilder: (context, index) {
               final model = filtered[index];
-
               return GestureDetector(
                 onTap: () {
                   if (!model.unlocked) {
-                    // En lugar de mostrar SnackBar, abrimos QRScanner y le pasamos el modelo tocado
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => QRScannerScreen(model: model),
-
                       ),
                     );
                     return;
                   }
-                    Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => MuseumScreen(model: model),
                     ),
                   );
-                  showDialog(
-                    context: context,
-                    builder: (_) {
-                      final controller = TextEditingController();
-                      return AlertDialog(
-                        title: Text("Adivinanza"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(model.riddle),
-                            TextField(
-                              controller: controller,
-                              decoration:
-                                  InputDecoration(labelText: 'Tu respuesta'),
-                            ),
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              final userAnswer =
-                                  controller.text.trim().toLowerCase();
-                              final correctAnswer =
-                                  model.answer.trim().toLowerCase();
-
-                              Navigator.pop(context);
-                              if (userAnswer == correctAnswer) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => MuseumScreen(model: model),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Respuesta incorrecta, intenta de nuevo')),
-                                );
-                              }
-                            },
-                            child: Text("Comprobar"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
                 },
                 child: Container(
-                  width: screenWidth * 0.6,
+                  width: MediaQuery.of(context).size.width * 0.6,
                   margin: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: DecorationImage(
-                      image: AssetImage(model.imagePath), // Imagen de fondo
+                      image: AssetImage(model.imagePath),
                       fit: BoxFit.cover,
                     ),
                     boxShadow: [
@@ -141,11 +130,8 @@ class _ModelListScreenState extends State<ModelListScreen>
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      gradient: LinearGradient(
-                        // ignore: deprecated_member_use
-                        colors: [
-                          Colors.transparent
-                        ],
+                      gradient: const LinearGradient(
+                        colors: [Colors.transparent],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
@@ -153,9 +139,10 @@ class _ModelListScreenState extends State<ModelListScreen>
                     child: Text(
                       model.name,
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

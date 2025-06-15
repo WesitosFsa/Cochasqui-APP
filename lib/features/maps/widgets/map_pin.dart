@@ -20,7 +20,7 @@ class MapPin {
   factory MapPin.fromMap(Map<String, dynamic> map, {bool visited = false}) {
     return MapPin(
       id: map['id'],
-      location: LatLng(map['lat'], map['lng']),
+      location: LatLng(map['latitude'], map['longitude']),
       title: map['title'],
       description: map['description'] ?? '',
       type: map['type'] ?? '',
@@ -34,8 +34,8 @@ class MapPin {
       'title': title,
       'description': description,
       'type': type,
-      'lat': location.latitude,
-      'lng': location.longitude,
+      'latitude': location.latitude,
+      'longitude': location.longitude,
     };
   }
 }

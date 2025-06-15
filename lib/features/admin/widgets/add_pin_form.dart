@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddPinForm extends StatefulWidget {
-  final double lat;
-  final double lng;
+  final double latitude;
+  final double longitude;
   final VoidCallback onSave;
   final Map<String, dynamic>? existingPin;
 
   const AddPinForm({
     super.key,
-    required this.lat,
-    required this.lng,
+    required this.latitude,
+    required this.longitude,
     required this.onSave,
     this.existingPin,
   });
@@ -60,8 +60,8 @@ class _AddPinFormState extends State<AddPinForm> {
       'title': titleController.text,
       'description': descController.text,
       'type': selectedType,
-      'lat': widget.lat,
-      'lng': widget.lng,
+      'latitude': widget.latitude,
+      'longitude': widget.longitude,
     };
 
     if (widget.existingPin != null) {
@@ -85,7 +85,7 @@ class _AddPinFormState extends State<AddPinForm> {
         child: Wrap(
           runSpacing: 16,
           children: [
-            Text('Añadir Pin en (${widget.lat.toStringAsFixed(5)}, ${widget.lng.toStringAsFixed(5)})'),
+            Text('Añadir Pin en (${widget.latitude.toStringAsFixed(5)}, ${widget.longitude.toStringAsFixed(5)})'),
             TextCamp(label: 'Título', controller: titleController),
             TextCamp(label: 'Descripción', controller: descController),
             DropdownCamp(

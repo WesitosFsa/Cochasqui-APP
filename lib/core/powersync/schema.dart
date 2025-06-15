@@ -24,8 +24,8 @@ Schema schema = Schema(([
 
   // Definición de la tabla 'map_pins'
   const Table('map_pins', [ // ¡No se define 'id' aquí!
-    Column.real('lat'), // double precision se mapea a 'real'
-    Column.real('lng'),
+    Column.real('latitude'), // double precision se mapea a 'real'
+    Column.real('longitude'),
     Column.text('title'),
     Column.text('description'),
     Column.text('type'),
