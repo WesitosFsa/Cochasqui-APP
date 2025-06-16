@@ -1,1 +1,0 @@
-# Config y setup de PowerSync

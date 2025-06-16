@@ -2,7 +2,7 @@ import 'package:cochasqui_park/core/supabase/auth_service.dart';
 import 'package:cochasqui_park/features/admin/MainScreenadmin.dart';
 import 'package:cochasqui_park/features/auth/screens/register_screen.dart';
 import 'package:cochasqui_park/features/auth/screens/resetpassword_screen.dart';
-import 'package:cochasqui_park/features/stats/stats_screen.dart';
+import 'package:cochasqui_park/features/guest/MainScreenG.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
 import 'package:cochasqui_park/shared/widgets/fonts_bold.dart';
@@ -194,7 +194,7 @@ class _LoginScreen extends State<LoginScreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      EstadisticasScreen()),
+                                      MainScreenGuests()),
                             );
                           })
                     ],

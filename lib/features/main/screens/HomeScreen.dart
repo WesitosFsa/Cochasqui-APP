@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isGuest; // Agregamos esta propiedad para saber si es invitado
+
+  const HomeScreen({super.key, this.isGuest = false}); // Constructor modificado para aceptar isGuest
 
   @override
   State<HomeScreen> createState() => _HomeScreen();
@@ -16,11 +18,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
+  late bool _isGuest; // Variable para almacenar el estado del invitado
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _isGuest = widget.isGuest; // Inicializamos _isGuest desde el widget
   }
 
   @override
@@ -29,75 +33,75 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-void mostrarDetalle({
-  required BuildContext context,
-  required String titulo,
-  required String descripcion,
-  required String imagen,
- }) {
-  showModalBottomSheet(
-   context: context,
-   isScrollControlled: true,
-   shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-   ),
-   builder: (_) =>
-     SingleChildScrollView(
-      child: Padding(
-       padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
-          top: 20,
-        ),
-       child: Column(
-          // ELIMINA ESTA LÍNEA: mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(titulo,
-              style:
-               const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-               'assets/images/$imagen',
-               fit: BoxFit.cover,
-               errorBuilder: (context, error, stackTrace) {
-                return Container(
-                 height: 150,
-                 color: Colors.grey[300],
-                 child: const Center(
-                  child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                 ),
-                );
-               },
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(descripcion, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 20),
-          ],
-       ),
+  void mostrarDetalle({
+    required BuildContext context,
+    required String titulo,
+    required String descripcion,
+    required String imagen,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
       ),
-   ),
-  );
- }
+      builder: (_) => SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(titulo,
+                  style:
+                      const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/$imagen',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 150,
+                      color: Colors.grey[300],
+                      child: const Center(
+                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(descripcion, style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   // Mapa de imágenes para la sección "Más opciones" (puedes ajustar estas)
   var moreOptionsImages = {
-    "Opcion1.png":"Pirámides", 
+    "Opcion1.png": "Pirámides",
     "Opcion2.png": "Llamas",
     "Opcion3.png": "Camping",
-    "Opcion4.png":"Astroturismo", 
-    "Opcion5.png": "Cabañas", 
-    "AlpacaMan.png": "Zona BBQ", 
+    "Opcion4.png": "Astroturismo",
+    "Opcion5.png": "Cabañas",
+    "AlpacaMan.png": "Zona BBQ",
   };
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    final currentUser = userProvider.user;
+    // Solo obtenemos userProvider si no es un invitado, ya que Supabase Auth no es relevante para invitados.
+    final userProvider = _isGuest ? null : Provider.of<UserProvider>(context);
+    final currentUser = userProvider?.user; // currentUser será null si _isGuest es true
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
@@ -108,8 +112,7 @@ void mostrarDetalle({
         "titulo": "¡Celebremos el Inti Raymi en Cochasquí!",
         "descripcion":
             "Este año, el Parque Arqueológico Cochasquí se prepara para celebrar el Inti Raymi, la Fiesta del Sol, con una serie de eventos culturales y tradicionales. ¡No te pierdas esta experiencia única para conectar con nuestras raíces ancestrales y disfrutar de la música, danza y gastronomía andina! Mantente atento a nuestras redes sociales para el cronograma completo de actividades.",
-        "imagen":
-            "Noticia1.png", // Asegúrate de tener esta imagen en assets/images
+        "imagen": "Noticia1.png", // Asegúrate de tener esta imagen en assets/images
       },
       // Puedes añadir más noticias aquí si las tienes
     ];
@@ -187,21 +190,35 @@ void mostrarDetalle({
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Cerrar sesión'),
-              onTap: () async {
-                final userProvider =
-                    Provider.of<UserProvider>(context, listen: false);
-                await Supabase.instance.client.auth.signOut();
-                userProvider.clearUser();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
-              },
-            ),
+            // Renderizado condicional del botón de cerrar sesión o volver a la pantalla principal
+            if (!_isGuest) // Solo si no es invitado
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: const Text('Cerrar sesión'),
+                onTap: () async {
+                  final userProvider =
+                      Provider.of<UserProvider>(context, listen: false);
+                  await Supabase.instance.client.auth.signOut();
+                  userProvider.clearUser();
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
+            if (_isGuest) // Solo si es invitado
+              ListTile(
+                leading: const Icon(Icons.home), // Icono para volver a la pantalla principal
+                title: const Text('Volver a la pantalla principal'),
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    (route) => false,
+                  );
+                },
+              ),
           ],
         ),
       ),
@@ -216,44 +233,47 @@ void mostrarDetalle({
                 children: [
                   Builder(
                     builder: (context) => IconButton(
-                      icon:
-                          const Icon(Icons.menu, size: 30, color: Colors.black),
+                      icon: const Icon(Icons.menu, size: 30, color: Colors.black),
                       onPressed: () {
                         Scaffold.of(context).openDrawer();
                       },
                     ),
                   ),
                   const Expanded(child: SizedBox()),
-                  Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    width: screenWidth * 0.13,
-                    height: screenWidth * 0.13,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.grey,
+                  // Renderizado condicional del contenedor de la imagen de usuario
+                  if (!_isGuest) // Solo muestra si no es invitado
+                    Container(
+                      margin: const EdgeInsets.only(right: 20),
+                      width: screenWidth * 0.13,
+                      height: screenWidth * 0.13,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.grey,
+                      ),
+                      child: currentUser?.avatarUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                '${currentUser!.avatarUrl!}?t=${DateTime.now().millisecondsSinceEpoch}',
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(Icons.person,
+                                      size: 40, color: Colors.white);
+                                },
+                              ),
+                            )
+                          : const Icon(Icons.person,
+                              size: 40, color: Colors.white),
                     ),
-                    child: currentUser?.avatarUrl != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              '${currentUser!.avatarUrl!}?t=${DateTime.now().millisecondsSinceEpoch}',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return const Icon(Icons.person,
-                                    size: 40, color: Colors.white);
-                              },
-                            ),
-                          )
-                        : const Icon(Icons.person,
-                            size: 40, color: Colors.white),
-                  )
                 ],
               ),
             ),
             SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: EdgeInsets.only(left: screenWidth * 0.05),
-              child: text_bold(text: 'Bienvenido', size: isTablet ? 24 : 20),
+              child: text_bold(
+                  text: _isGuest ? 'Bienvenido Invitado' : 'Bienvenido', // Texto de bienvenida diferente
+                  size: isTablet ? 24 : 20),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -281,8 +301,7 @@ void mostrarDetalle({
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           text_bold(
-                              text:
-                                  '¡Vive la experiencia en Realidad Aumentada!',
+                              text: '¡Vive la experiencia en Realidad Aumentada!',
                               size: isTablet ? 18 : 16),
                           const SizedBox(height: 8),
                           text_simple(
@@ -338,7 +357,7 @@ void mostrarDetalle({
                               top: screenHeight * 0.015,
                               left: (index == 0)
                                   ? screenWidth * 0.04
-                                  : 0), // Adjust left margin for the first item
+                                  : 0), // Ajustar margen izquierdo para el primer elemento
                           width: screenWidth * 0.55,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
@@ -348,8 +367,8 @@ void mostrarDetalle({
                                   'assets/images/${item["imagen"]!}'),
                               fit: BoxFit.cover,
                               onError: (exception, stackTrace) {
-                                // Fallback to a placeholder icon if image fails to load
-                                return; // Returning nothing uses the parent's background
+                                // Fallback a un icono de marcador de posición si la imagen no carga
+                                return; // Devolver nada usa el fondo del padre
                               },
                             ),
                           ),
@@ -407,7 +426,7 @@ void mostrarDetalle({
                               image: AssetImage(
                                   'assets/images/${item["imagen"]!}'),
                               fit: BoxFit
-                                  .cover, // Use cover for a good fit, or contain if it's an icon
+                                  .cover, // Usar cover para un buen ajuste, o contain si es un icono
                               onError: (exception, stackTrace) {
                                 return;
                               },
@@ -467,7 +486,7 @@ void mostrarDetalle({
                               image: AssetImage(
                                   'assets/images/${item["imagen"]!}'),
                               fit: BoxFit
-                                  .cover, // Use cover or contain depending on image type
+                                  .cover, // Usar cover o contain dependiendo del tipo de imagen
                               onError: (exception, stackTrace) {
                                 return;
                               },
@@ -501,7 +520,8 @@ void mostrarDetalle({
                 ],
               ),
             ),
-            SizedBox(height: screenHeight * 0.03),
+
+             SizedBox(height: screenHeight * 0.03),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
               child: Row(
@@ -554,26 +574,26 @@ void mostrarDetalle({
                 },
               ),
             ),
-            SizedBox(height: screenHeight * 0.03),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => FeedbackScreen()));
-                },
-                icon: const Icon(Icons.feedback),
-                label: const Text("Dar feedback"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            if (!_isGuest) // Solo muestra si no es invitado
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => FeedbackScreen()));
+                  },
+                  icon: const Icon(Icons.feedback),
+                  label: const Text("Dar feedback"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
               ),
-            ),
             const SizedBox(height: 30),
           ],
         ),
