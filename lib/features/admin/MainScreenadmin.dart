@@ -1,8 +1,9 @@
+import 'package:cochasqui_park/features/admin/MainScreenDashboardadmin.dart';
 import 'package:cochasqui_park/features/admin/ManageARadmin.dart';
 import 'package:cochasqui_park/features/admin/ManageMapadmin.dart';
 import 'package:cochasqui_park/features/admin/admin_feedback_screen.dart';
-import 'package:cochasqui_park/features/feedback/feedback_screen.dart';
-import 'package:cochasqui_park/features/main/screens/welcome_screen.dart';
+import 'package:cochasqui_park/features/main/screens/welcome_screen.dart'; 
+import 'package:cochasqui_park/features/stats/stats_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cochasqui_park/features/auth/widgets/change_notifier_provider.dart';
@@ -11,14 +12,15 @@ class MainScreenAdmin extends StatefulWidget {
   const MainScreenAdmin({super.key});
 
   @override
-  State<MainScreenAdmin> createState() => _MainScreenAdmin();
+  State<MainScreenAdmin> createState() => _MainScreenAdminState(); 
 }
 
-class _MainScreenAdmin extends State<MainScreenAdmin> {
+class _MainScreenAdminState extends State<MainScreenAdmin> {
   int currentIndex = 0;
 
-  final List screens = [
-    FeedbackScreen(),
+  final List<Widget> screens = [
+    const AdminDashboardScreen(), 
+    const StatisticsScreen(),   
     ManageARadmin(),
     ManageMapadmin(),
     AdminFeedbackScreen(),
@@ -49,7 +51,7 @@ class _MainScreenAdmin extends State<MainScreenAdmin> {
               MaterialPageRoute(builder: (_) => const WelcomeScreen()),
             );
           });
-          return const SizedBox();
+          return const SizedBox(); 
         }
 
         return Scaffold(
@@ -63,10 +65,15 @@ class _MainScreenAdmin extends State<MainScreenAdmin> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             elevation: 0,
+            type: BottomNavigationBarType.fixed, 
             items: const [
               BottomNavigationBarItem(
-                label: "Menu",
-                icon: Icon(Icons.dashboard_customize),
+                label: "Inicio", 
+                icon: Icon(Icons.home), 
+              ),
+              BottomNavigationBarItem(
+                label: "Estadísticas",
+                icon: Icon(Icons.bar_chart),
               ),
               BottomNavigationBarItem(
                 label: "Editar AR",
@@ -77,8 +84,8 @@ class _MainScreenAdmin extends State<MainScreenAdmin> {
                 icon: Icon(Icons.map),
               ),
               BottomNavigationBarItem(
-                label: "Ver Feedback",
-                icon: Icon(Icons.show_chart),
+                label: "Feedback", 
+                icon: Icon(Icons.feedback), 
               ),
             ],
           ),
