@@ -60,13 +60,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     final mensaje = _mensajeController.text.trim();
     final user = Supabase.instance.client.auth.currentUser;
 
-    debugPrint('Intentando enviar feedback...');
-    debugPrint('Mensaje: "$mensaje"');
-    debugPrint('Usuario: ${user?.id}');
 
 
     if (mensaje.isEmpty || user == null) {
-      debugPrint('Mensaje vacío o usuario no autenticado');
       return;
     }
 
@@ -76,7 +72,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
     try {
       final idGenerado = '${DateTime.now().millisecondsSinceEpoch}_${user.id}';
-      debugPrint('ID generado para feedback: $idGenerado');
 
       await db.execute('''
         INSERT INTO feedback(id, user_id, mensaje)
@@ -87,7 +82,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         mensaje,
       ]);
 
-      debugPrint('Feedback insertado exitosamente');
 
       _mensajeController.clear();
 
@@ -96,7 +90,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         const SnackBar(content: Text('¡Gracias por tu retroalimentación!')),
       );
     } catch (e) {
-      debugPrint('Error al insertar feedback: $e');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al enviar: $e')),

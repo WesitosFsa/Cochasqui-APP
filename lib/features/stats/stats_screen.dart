@@ -79,7 +79,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         _errorMessage = 'Error al cargar estadísticas: $e';
         _isLoading = false;
       });
-      debugPrint('Error loading statistics: $e');
     }
   }
 

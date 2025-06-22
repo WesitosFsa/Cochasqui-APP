@@ -46,7 +46,6 @@ class _AdminFeedbackScreenState extends State<AdminFeedbackScreen> with SingleTi
         _allFeedbackList = res.map((json) => UserFeedback.fromJson(json)).toList();
       });
     } catch (e) {
-      debugPrint('Error al cargar comentarios: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al cargar comentarios: $e')),
@@ -74,7 +73,6 @@ class _AdminFeedbackScreenState extends State<AdminFeedbackScreen> with SingleTi
         }
       });
     } catch (e) {
-      debugPrint('Error al marcar como leído: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al marcar como leído: $e')),

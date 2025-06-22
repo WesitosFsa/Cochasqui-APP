@@ -181,11 +181,14 @@ class _ManageARadminState extends State<ManageARadmin> {
                       TextCamp(
                         label: 'Nombre',
                         controller: nameController,
+                        emptyAndSpecialCharValidation: true,
                       ),
                       const SizedBox(height: 10),
                       TextCamp(
                         label: 'Descripción',
                         controller: descController,
+                        emptyAndSpecialCharValidation: true,
+
                       ),
                       const SizedBox(height: 10),
                       DropdownCamp(
@@ -213,6 +216,8 @@ class _ManageARadminState extends State<ManageARadmin> {
                       TextCamp(
                         label: 'Adivinanza',
                         controller: riddleController,
+                        emptyAndSpecialCharValidation: true,
+
                       ),
                       const SizedBox(height: 10),
                       TextCamp(

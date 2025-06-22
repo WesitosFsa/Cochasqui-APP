@@ -86,8 +86,12 @@ class _AddPinFormState extends State<AddPinForm> {
           runSpacing: 16,
           children: [
             Text('Añadir Pin en (${widget.latitude.toStringAsFixed(5)}, ${widget.longitude.toStringAsFixed(5)})'),
-            TextCamp(label: 'Título', controller: titleController),
-            TextCamp(label: 'Descripción', controller: descController),
+            TextCamp(label: 'Título', controller: titleController,
+                        emptyAndSpecialCharValidation: true,
+             ),
+            TextCamp(label: 'Descripción', controller: descController,
+                        emptyAndSpecialCharValidation: true,
+            ),
             DropdownCamp(
               label: 'Tipo',
               value: selectedType,

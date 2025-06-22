@@ -82,6 +82,7 @@ class _VerifyCodeScreenState extends State<VerifyCodeScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 passwordView: true,
+                passwordValidations:true,
               ),
               const SizedBox(height: 30),
               ButtonR(

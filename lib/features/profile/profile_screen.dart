@@ -248,6 +248,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: _nombreController,
             readOnly: !_isEditing,
             readType: !_isEditing,
+                        emptyAndSpecialCharValidation: true,
+
           ),
           const SizedBox(height: 20),
           TextCamp(
@@ -255,6 +257,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: _apellidoController,
             readOnly: !_isEditing,
             readType: !_isEditing,
+                        emptyAndSpecialCharValidation: true,
+
           ),
           const SizedBox(height: 20),
           TextCamp(
