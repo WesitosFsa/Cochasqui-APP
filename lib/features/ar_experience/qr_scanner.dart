@@ -73,7 +73,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column( // Changed from Stack to Column to allow natural flow
+        child: Column( 
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -131,11 +131,10 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
                 ),
               ),
             ],
-            const Spacer(), // Keep the Spacer here to push content to the top when no QR code is scanned
+            const Spacer(), 
 
-            // Moved the ElevatedButton here, inside the Column
             Padding(
-              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 40.0), // Adjust padding as needed
+              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 40.0), 
               child: ElevatedButton(
                 onPressed: scannedCode != null ? _handleUnlock : null,
                 style: ElevatedButton.styleFrom(

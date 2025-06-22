@@ -1,4 +1,3 @@
-// main_screen.dart
 import 'package:cochasqui_park/features/ar_experience/ar_loader.dart';
 // ignore: unused_import
 import 'package:cochasqui_park/features/feedback/feedback_screen.dart';
@@ -33,7 +32,7 @@ class _MainScreen extends State<MainScreen> {
     ];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAndShowTutorials(); // Renombrado para ser más general
+      _checkAndShowTutorials(); 
     });
   }
 
@@ -41,43 +40,33 @@ class _MainScreen extends State<MainScreen> {
     setState(() {
       currentIndex = index;
     });
-    // Si el usuario navega a la pestaña de AR (índice 1),
-    // y no ha visto el tutorial de AR, lo mostramos.
     if (index == 1) {
       _checkAndShowARTutorial();
     }
-    // NUEVO: Si el usuario navega a la pestaña de Mapa (índice 2),
-    // y no ha visto el tutorial de Mapa, lo mostramos.
     else if (index == 2) {
       _checkAndShowMapTutorial();
     }
-    // NUEVO: Si el usuario navega a la pestaña de Perfil (índice 3),
-    // y no ha visto el tutorial de Perfil, lo mostramos.
     else if (index == 3) {
       _checkAndShowProfileTutorial();
     }
   }
 
-  // Lógica general para verificar y mostrar tutoriales al inicio
   Future<void> _checkAndShowTutorials() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // --- Tutorial Principal (Alpaca) ---
     final hasSeenMainTutorial = prefs.getBool('has_seen_initial_tutorial') ?? false;
     if (!hasSeenMainTutorial) {
-      await _showAlpacaTutorial(); // Espera a que el diálogo principal se cierre
+      await _showAlpacaTutorial(); 
       await prefs.setBool('has_seen_initial_tutorial', true);
     }
 
-    // --- Tutorial de la Pantalla de Inicio (HomeScreen) ---
     final hasSeenHomeScreenTutorial = prefs.getBool('has_seen_home_screen_tutorial') ?? false;
     if (!hasSeenHomeScreenTutorial) {
-      await _showHomeScreenTutorialInternal(); // Espera a que el diálogo de HomeScreen se cierre
+      await _showHomeScreenTutorialInternal(); 
       await prefs.setBool('has_seen_home_screen_tutorial', true);
     }
   }
 
-  // Método para mostrar el AlertDialog con la alpaca y su explicación (Tutorial Principal)
   Future<void> _showAlpacaTutorial() async {
     await showDialog(
       context: context,
@@ -139,7 +128,6 @@ class _MainScreen extends State<MainScreen> {
     );
   }
 
-  // Método para mostrar el AlertDialog con la explicación específica de HomeScreen
   Future<void> _showHomeScreenTutorialInternal() async {
     await showDialog(
       context: context,
@@ -153,7 +141,7 @@ class _MainScreen extends State<MainScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/AlpacaMan.png', // Asegúrate de que esta imagen exista
+                  'assets/images/AlpacaMan.png', 
                   height: 100,
                   fit: BoxFit.contain,
                 ),
@@ -211,17 +199,15 @@ class _MainScreen extends State<MainScreen> {
     );
   }
 
-  // Método para verificar y mostrar el tutorial de AR
   Future<void> _checkAndShowARTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenARTutorial = prefs.getBool('has_seen_ar_tutorial') ?? false;
     if (!hasSeenARTutorial) {
-      await _showARTutorialInternal(); // Muestra el tutorial de AR
+      await _showARTutorialInternal(); 
       await prefs.setBool('has_seen_ar_tutorial', true);
     }
   }
 
-  // Método para mostrar el AlertDialog con la explicación específica de AR
   Future<void> _showARTutorialInternal() async {
     await showDialog(
       context: context,
@@ -235,7 +221,7 @@ class _MainScreen extends State<MainScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/AlpacaMan.png', // Usa la imagen de la alpaca o una nueva si tienes
+                  'assets/images/AlpacaMan.png', 
                   height: 100,
                   fit: BoxFit.contain,
                 ),
@@ -293,17 +279,15 @@ class _MainScreen extends State<MainScreen> {
     );
   }
 
-  // NUEVO: Método para verificar y mostrar el tutorial del Mapa
   Future<void> _checkAndShowMapTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenMapTutorial = prefs.getBool('has_seen_map_tutorial') ?? false;
     if (!hasSeenMapTutorial) {
-      await _showMapTutorialInternal(); // Muestra el tutorial del Mapa
+      await _showMapTutorialInternal(); 
       await prefs.setBool('has_seen_map_tutorial', true);
     }
   }
 
-  // NUEVO: Método para mostrar el AlertDialog con la explicación específica del Mapa
   Future<void> _showMapTutorialInternal() async {
     await showDialog(
       context: context,
@@ -317,7 +301,7 @@ class _MainScreen extends State<MainScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/AlpacaMan.png', // O una imagen de mapa si tienes
+                  'assets/images/AlpacaMan.png', 
                   height: 100,
                   fit: BoxFit.contain,
                 ),
@@ -375,17 +359,15 @@ class _MainScreen extends State<MainScreen> {
     );
   }
 
-  // NUEVO: Método para verificar y mostrar el tutorial del Perfil
   Future<void> _checkAndShowProfileTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenProfileTutorial = prefs.getBool('has_seen_profile_tutorial') ?? false;
     if (!hasSeenProfileTutorial) {
-      await _showProfileTutorialInternal(); // Muestra el tutorial del Perfil
+      await _showProfileTutorialInternal(); 
       await prefs.setBool('has_seen_profile_tutorial', true);
     }
   }
 
-  // NUEVO: Método para mostrar el AlertDialog con la explicación específica del Perfil
   Future<void> _showProfileTutorialInternal() async {
     await showDialog(
       context: context,
@@ -399,7 +381,7 @@ class _MainScreen extends State<MainScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/AlpacaMan.png', // O una imagen de perfil si tienes
+                  'assets/images/AlpacaMan.png', 
                   height: 100,
                   fit: BoxFit.contain,
                 ),

@@ -1,4 +1,3 @@
-// main_screen.dart
 import 'package:cochasqui_park/features/ar_experience/ar_loader.dart';
 // import 'package:cochasqui_park/features/feedback/feedback_screen.dart';
 import 'package:cochasqui_park/features/main/screens/HomeScreen.dart';
@@ -144,7 +143,7 @@ class _MainScreenGuests extends State<MainScreenGuests> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  '¡Bienvenido a la Pantalla Principal!', // Cambiado de "Menú Principal"
+                  '¡Bienvenido a la Pantalla Principal!', 
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -187,17 +186,15 @@ class _MainScreenGuests extends State<MainScreenGuests> {
     );
   }
 
-  // Método para verificar y mostrar el tutorial de AR
   Future<void> _checkAndShowARTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenARTutorial = prefs.getBool('has_seen_ar_tutorial') ?? false;
     if (!hasSeenARTutorial) {
-      await _showARTutorialInternal(); // Muestra el tutorial de AR
+      await _showARTutorialInternal(); 
       await prefs.setBool('has_seen_ar_tutorial', true);
     }
   }
 
-  // Método para mostrar el AlertDialog con la explicación específica de AR
   Future<void> _showARTutorialInternal() async {
     await showDialog(
       context: context,
@@ -269,17 +266,15 @@ class _MainScreenGuests extends State<MainScreenGuests> {
     );
   }
 
-  // NUEVO: Método para verificar y mostrar el tutorial del Mapa
   Future<void> _checkAndShowMapTutorial() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenMapTutorial = prefs.getBool('has_seen_map_tutorial') ?? false;
     if (!hasSeenMapTutorial) {
-      await _showMapTutorialInternal(); // Muestra el tutorial del Mapa
+      await _showMapTutorialInternal(); 
       await prefs.setBool('has_seen_map_tutorial', true);
     }
   }
 
-  // NUEVO: Método para mostrar el AlertDialog con la explicación específica del Mapa
   Future<void> _showMapTutorialInternal() async {
     await showDialog(
       context: context,

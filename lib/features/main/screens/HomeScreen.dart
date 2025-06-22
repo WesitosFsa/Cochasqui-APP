@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool isGuest; // Agregamos esta propiedad para saber si es invitado
+  final bool isGuest; 
 
-  const HomeScreen({super.key, this.isGuest = false}); // Constructor modificado para aceptar isGuest
+  const HomeScreen({super.key, this.isGuest = false}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreen();
@@ -18,13 +18,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  late bool _isGuest; // Variable para almacenar el estado del invitado
+  late bool _isGuest; 
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _isGuest = widget.isGuest; // Inicializamos _isGuest desde el widget
+    _isGuest = widget.isGuest; 
   }
 
   @override
@@ -86,7 +86,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // Mapa de imágenes para la sección "Más opciones" (puedes ajustar estas)
   var moreOptionsImages = {
     "Opcion1.png": "Pirámides",
     "Opcion2.png": "Llamas",
@@ -98,82 +97,77 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    // Solo obtenemos userProvider si no es un invitado, ya que Supabase Auth no es relevante para invitados.
     final userProvider = _isGuest ? null : Provider.of<UserProvider>(context);
-    final currentUser = userProvider?.user; // currentUser será null si _isGuest es true
+    final currentUser = userProvider?.user; 
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
 
-    // Contenido para la pestaña de Noticias
     final List<Map<String, String>> noticias = [
       {
         "titulo": "¡Celebremos el Inti Raymi en Cochasquí!",
         "descripcion":
             "Este año, el Parque Arqueológico Cochasquí se prepara para celebrar el Inti Raymi, la Fiesta del Sol, con una serie de eventos culturales y tradicionales. ¡No te pierdas esta experiencia única para conectar con nuestras raíces ancestrales y disfrutar de la música, danza y gastronomía andina! Mantente atento a nuestras redes sociales para el cronograma completo de actividades.",
-        "imagen": "Noticia1.png", // Asegúrate de tener esta imagen en assets/images
+        "imagen": "Noticia1.png",
       },
-      // Puedes añadir más noticias aquí si las tienes
     ];
 
-    // Contenido para la pestaña de Información
     final List<Map<String, String>> informacion = [
       {
         "titulo": "¿Qué es Cochasquí?",
         "descripcion":
             "En Cochasquí tenemos la presencia humana en el periodo de integración, periodo que comprende desde el 500 d.C. hasta el 1500 d.C. En el caso de Cochasquí, la datación radiocarbónica del sitio se divide en dos periodos: Cochasquí 1 (del 950 al 1250 d.C.) y Cochasquí 2 (del 1250 hasta 1550 d.C.), en el cual se incluye el periodo de ocupación inca del sitio. El museo de sitio Quilago exhibe piezas representativas del lugar, destacando la cultura Caranqui como principal, junto a otras culturas.",
-        "imagen": "Informacion1.png", // O una imagen del museo
+        "imagen": "Informacion1.png", 
       },
       {
         "titulo": "Convive con las Llamas",
         "descripcion":
             "Más de 60 llamas en nuestro parque arqueológico. Las llamas, animales emblemáticos de la región andina, están emparentadas a los camellos y son criaturas dóciles y curiosas que a menudo se acercan a nuestros visitantes para que les brinden sal de su mano, siendo esta una gran oportunidad para fotografiarse junto a estos simpáticos animales.",
-        "imagen": "Informacion2.png", // Una imagen de llamas
+        "imagen": "Informacion2.png", 
       },
       {
         "titulo": "Un espacio para compartir entre familia y amigos",
         "descripcion":
             "En un entorno seguro y familiar ideal para quienes prefieren algo más de facilidades en sus acampadas. Disponemos de instalaciones como juegos infantiles, área de BBQ, espacios verdes, rodeados de un paisaje sin igual; muy recomendable para quienes gustan escapar de la rutina sin alejarse demasiado de la ciudad fomentando un estilo de vida más activo.",
-        "imagen": "Informacion3.png", // Una imagen de zona de camping/BBQ
+        "imagen": "Informacion3.png",
       },
       {
         "titulo": "Ingreso al Parque Arqueológico",
         "descripcion": "Niños – \$0,50\nAdultos – \$1,00",
-        "imagen": "Informacion5.png", // Un icono de ticket o dinero
+        "imagen": "Informacion5.png", 
       },
       {
         "titulo": "Horario de Atención",
         "descripcion":
             "Lunes a Domingo\n08h00 a 16h30\nÚltimo grupo guiado ingresa a las 15h00",
-        "imagen": "Informacion4.png", // Un icono de reloj
+        "imagen": "Informacion4.png", 
       },
     ];
 
-    // Contenido para la pestaña de Camping
     final List<Map<String, String>> campingInfo = [
       {
         "titulo": "Área de Camping",
         "descripcion": "Lunes a Domingo\n08h00 a 16h30",
-        "imagen": "Camping1.png", // Un icono de camping
+        "imagen": "Camping1.png", 
       },
       {
         "titulo": "Costo de Camping",
         "descripcion":
             "\$3.00 por persona\nAdemás contamos con alquiler de carpas, venta de leña y carbón… entre otros",
-        "imagen": "Camping3.png", // Un icono de dinero
+        "imagen": "Camping3.png",
       },
       {
         "titulo": "Comodidades del Área de Camping",
         "descripcion":
             "Contamos con plataformas acondicionadas para que puedas armar tu carpa; encontrarás un área para hacer fogata o asado con tu propia parrilla y si no la tienes te podemos alquilar una.",
-        "imagen": "Camping2.png", // Un icono de fogata o parrilla
+        "imagen": "Camping2.png", 
       },
       {
         "titulo": "Zona BBQ",
         "descripcion":
             "Contamos con cuatro chozones equipados con parrillas, lavabo, mesa y basurero con una capacidad de hasta 10 personas en cada chozón.",
-        "imagen": "Camping4.png", // Un icono de BBQ
+        "imagen": "Camping4.png", 
       },
     ];
 
@@ -190,8 +184,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 Navigator.pop(context);
               },
             ),
-            // Renderizado condicional del botón de cerrar sesión o volver a la pantalla principal
-            if (!_isGuest) // Solo si no es invitado
+            if (!_isGuest) 
               ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text('Cerrar sesión'),
@@ -207,9 +200,9 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                   );
                 },
               ),
-            if (_isGuest) // Solo si es invitado
+            if (_isGuest) 
               ListTile(
-                leading: const Icon(Icons.home), // Icono para volver a la pantalla principal
+                leading: const Icon(Icons.home), 
                 title: const Text('Volver a la pantalla principal'),
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
@@ -240,8 +233,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                   ),
                   const Expanded(child: SizedBox()),
-                  // Renderizado condicional del contenedor de la imagen de usuario
-                  if (!_isGuest) // Solo muestra si no es invitado
+                  if (!_isGuest) 
                     Container(
                       margin: const EdgeInsets.only(right: 20),
                       width: screenWidth * 0.13,
@@ -272,7 +264,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
             Padding(
               padding: EdgeInsets.only(left: screenWidth * 0.05),
               child: text_bold(
-                  text: _isGuest ? 'Bienvenido Invitado' : 'Bienvenido', // Texto de bienvenida diferente
+                  text: _isGuest ? 'Bienvenido Invitado' : 'Bienvenido', 
                   size: isTablet ? 24 : 20),
             ),
             Padding(
@@ -336,7 +328,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  // Contenido de Noticias
                   ListView.builder(
                     itemCount: noticias.length,
                     scrollDirection: Axis.horizontal,
@@ -357,7 +348,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               top: screenHeight * 0.015,
                               left: (index == 0)
                                   ? screenWidth * 0.04
-                                  : 0), // Ajustar margen izquierdo para el primer elemento
+                                  : 0), 
                           width: screenWidth * 0.55,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
@@ -366,67 +357,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               image: AssetImage(
                                   'assets/images/${item["imagen"]!}'),
                               fit: BoxFit.cover,
-                              onError: (exception, stackTrace) {
-                                // Fallback a un icono de marcador de posición si la imagen no carga
-                                return; // Devolver nada usa el fondo del padre
-                              },
-                            ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                item["titulo"]!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 5.0,
-                                      color: Colors.black,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Contenido de Información
-                  ListView.builder(
-                    itemCount: informacion.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = informacion[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mostrarDetalle(
-                            context: context,
-                            titulo: item["titulo"]!,
-                            descripcion: item["descripcion"]!,
-                            imagen: item["imagen"]!,
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              right: screenWidth * 0.04,
-                              top: screenHeight * 0.015,
-                              left: (index == 0) ? screenWidth * 0.04 : 0),
-                          width: screenWidth * 0.55,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/${item["imagen"]!}'),
-                              fit: BoxFit
-                                  .cover, // Usar cover para un buen ajuste, o contain si es un icono
                               onError: (exception, stackTrace) {
                                 return;
                               },
@@ -458,7 +388,65 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                     },
                   ),
 
-                  // Contenido de Camping
+                  ListView.builder(
+                    itemCount: informacion.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      final item = informacion[index];
+                      return GestureDetector(
+                        onTap: () {
+                          mostrarDetalle(
+                            context: context,
+                            titulo: item["titulo"]!,
+                            descripcion: item["descripcion"]!,
+                            imagen: item["imagen"]!,
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              right: screenWidth * 0.04,
+                              top: screenHeight * 0.015,
+                              left: (index == 0) ? screenWidth * 0.04 : 0),
+                          width: screenWidth * 0.55,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/${item["imagen"]!}'),
+                              fit: BoxFit
+                                  .cover, 
+                              onError: (exception, stackTrace) {
+                                return;
+                              },
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                item["titulo"]!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 5.0,
+                                      color: Colors.black,
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
                   ListView.builder(
                     itemCount: campingInfo.length,
                     scrollDirection: Axis.horizontal,
@@ -486,7 +474,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                               image: AssetImage(
                                   'assets/images/${item["imagen"]!}'),
                               fit: BoxFit
-                                  .cover, // Usar cover o contain dependiendo del tipo de imagen
+                                  .cover, 
                               onError: (exception, stackTrace) {
                                 return;
                               },
@@ -574,7 +562,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                 },
               ),
             ),
-            if (!_isGuest) // Solo muestra si no es invitado
+            if (!_isGuest) 
               Center(
                 child: ElevatedButton.icon(
                   onPressed: () {

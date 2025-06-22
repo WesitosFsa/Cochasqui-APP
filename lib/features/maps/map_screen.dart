@@ -32,7 +32,7 @@ class _MapScreen extends State<MapScreen> {
   late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   StreamSubscription<Position>? _positionStream;
 
-  final uuid = const Uuid(); 
+  final uuid = const Uuid();
 
   static Future<MbTiles> _initMbtiles() async {
     final file = await copyAssetToFile('assets/maps/Cochasqui.mbtiles');
@@ -45,23 +45,22 @@ class _MapScreen extends State<MapScreen> {
     _startListeningPosition();
     _checkInitialConnectivity();
     _setupConnectivityListener();
-
   }
+
   Future<void> _checkInitialConnectivity() async {
     final connectivityResult = await (Connectivity().checkConnectivity());
     _updateConnectivityStatus(connectivityResult);
   }
 
   void _setupConnectivityListener() {
-
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((List<ConnectivityResult> results) {
       _updateConnectivityStatus(results);
     });
   }
-  void _updateConnectivityStatus(List<ConnectivityResult> results) {
 
+  void _updateConnectivityStatus(List<ConnectivityResult> results) {
     final hasConnection = results.contains(ConnectivityResult.mobile) ||
         results.contains(ConnectivityResult.wifi) ||
         results.contains(ConnectivityResult.ethernet) ||
@@ -135,6 +134,8 @@ class _MapScreen extends State<MapScreen> {
   }
 
   void _showPinInfo(MapPin pin) {
+    final bool isLoggedIn = Supabase.instance.client.auth.currentUser != null;
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -146,24 +147,29 @@ class _MapScreen extends State<MapScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(pin.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(pin.title,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text(pin.description),
               const SizedBox(height: 16),
-              if (!pin.visited)
+              if (isLoggedIn && !pin.visited) 
                 ButtonR(
                   text: 'Marcar como visitado',
                   onTap: () async {
-                    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
-                    final visitedAt = DateTime.now().toIso8601String(); 
+                    final currentUserId =
+                        Supabase.instance.client.auth.currentUser?.id;
+                    final visitedAt = DateTime.now().toIso8601String();
 
                     if (currentUserId == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Error: Usuario no autenticado para marcar pin.')),
-                        );
-                        return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content:
+                                Text('Error: Usuario no autenticado para marcar pin.')),
+                      );
+                      return;
                     }
-                    
+
                     final newVisitedPinId = uuid.v4();
 
                     try {
@@ -173,7 +179,7 @@ class _MapScreen extends State<MapScreen> {
                         VALUES (?, ?, ?, ?)
                         ''',
                         [
-                          newVisitedPinId, 
+                          newVisitedPinId,
                           currentUserId,
                           pin.id,
                           visitedAt
@@ -181,7 +187,8 @@ class _MapScreen extends State<MapScreen> {
                       );
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Punto marcado como visitado')),
+                        const SnackBar(
+                            content: Text('Punto marcado como visitado')),
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -192,7 +199,8 @@ class _MapScreen extends State<MapScreen> {
                   color: AppColors.verde,
                   icon: Icons.check,
                 ),
-              const SizedBox(height: 10),
+              if (isLoggedIn && !pin.visited)
+                const SizedBox(height: 10),
               ButtonR(
                 text: 'Cerrar',
                 onTap: () {
@@ -211,15 +219,12 @@ class _MapScreen extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     final userId = Supabase.instance.client.auth.currentUser?.id;
-
-    if (userId == null) {
-      return const Center(child: Text("Usuario no autenticado"));
-    }
+    final bool isLoggedIn = userId != null; 
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Mapa del Parque Cochasqui'),
+        title: const Text('Mapa del Parque'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
@@ -237,10 +242,11 @@ class _MapScreen extends State<MapScreen> {
           if (snapshot.hasData) {
             _mbtiles = snapshot.data;
             return StreamBuilder<List<MapPin>>(
-              stream: watchMapPins(db, userId),
+              stream: watchMapPins(db, isLoggedIn ? userId : null),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error cargando pines: ${snapshot.error}'));
+                  return Center(
+                      child: Text('Error cargando pines: ${snapshot.error}'));
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
@@ -257,7 +263,7 @@ class _MapScreen extends State<MapScreen> {
                   children: [
                     TileLayer(
                       tileProvider: MbTilesTileProvider(
-                        mbtiles: _mbtiles!, 
+                        mbtiles: _mbtiles!,
                         silenceTileNotFound: true,
                       ),
                     ),
@@ -296,7 +302,7 @@ class _MapScreen extends State<MapScreen> {
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }
-          
+
           return const Center(child: CircularProgressIndicator());
         },
       ),
