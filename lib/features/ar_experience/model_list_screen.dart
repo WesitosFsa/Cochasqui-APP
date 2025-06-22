@@ -121,7 +121,7 @@ class _ModelListScreenState extends State<ModelListScreen>
                       image: AssetImage(model.imagePath),
                       fit: BoxFit.cover,
                     ),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(blurRadius: 8, color: Colors.black26)
                     ],
                   ),
@@ -130,8 +130,9 @@ class _ModelListScreenState extends State<ModelListScreen>
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      gradient: const LinearGradient(
-                        colors: [Colors.transparent],
+                      gradient: LinearGradient(
+                        // Gradiente ajustado para mejor visibilidad del texto
+                        colors: [Colors.black, Colors.transparent],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
@@ -140,7 +141,7 @@ class _ModelListScreenState extends State<ModelListScreen>
                       model.name,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 18, // Tamaño de fuente ligeramente aumentado
                         fontWeight: FontWeight.bold,
                       ),
                     ),

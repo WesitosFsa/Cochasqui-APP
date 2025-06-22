@@ -55,7 +55,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Respuesta incorrecta, intenta de nuevo')),
       );
-      setState(() => scannedCode = null); 
+      setState(() => scannedCode = null);
     }
   }
 
@@ -73,76 +73,69 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Stack(
+        child: Column( // Changed from Stack to Column to allow natural flow
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.stretch, 
-              children: [
-  
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 20.0), 
-                  child: Text(
-                    widget.model.riddle,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 20.0),
+              child: Text(
+                widget.model.riddle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 20),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
 
-     
-                Center( 
-                  child: Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: AppColors.negroAzulado, width: 4),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 6,
-                          offset: Offset(0, 4),
-                        )
-                      ],
-                    ),
-                    child: MobileScanner(
-                      onDetect: _onBarcodeDetected,
-                    ),
-                  ),
+            Center(
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: AppColors.negroAzulado, width: 4),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 6,
+                      offset: Offset(0, 4),
+                    )
+                  ],
                 ),
-
-                const SizedBox(height: 20),
-
-                if (scannedCode != null) ...[
-                  const Center(child: Icon(Icons.qr_code, size: 80, color: Colors.white)), 
-                  const SizedBox(height: 10),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      scannedCode!,
-                      style: const TextStyle(fontSize: 16),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
-                const Spacer(), 
-              ],
+                child: MobileScanner(
+                  onDetect: _onBarcodeDetected,
+                ),
+              ),
             ),
 
-            Positioned(
-              bottom: 60,
-              left: 30,
-              right: 30,
+            const SizedBox(height: 20),
+
+            if (scannedCode != null) ...[
+              const Center(child: Icon(Icons.qr_code, size: 80, color: Colors.white)),
+              const SizedBox(height: 10),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  scannedCode!,
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+            const Spacer(), // Keep the Spacer here to push content to the top when no QR code is scanned
+
+            // Moved the ElevatedButton here, inside the Column
+            Padding(
+              padding: const EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 40.0), // Adjust padding as needed
               child: ElevatedButton(
                 onPressed: scannedCode != null ? _handleUnlock : null,
                 style: ElevatedButton.styleFrom(
