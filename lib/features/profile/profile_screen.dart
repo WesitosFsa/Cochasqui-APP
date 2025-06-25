@@ -111,6 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  // ignore: unused_element
   Future<void> _selectDate(BuildContext context) async {
     if (!_isEditing) return; 
     final DateTime? picked = await showDatePicker(
@@ -265,9 +266,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             label: 'Fecha de Nacimiento',
             controller: _fechaNacimientoController,
             suffixIcon: const Icon(Icons.calendar_today),
-            onTap: () => _selectDate(context),
-            readOnly: !_isEditing,
-            readType: !_isEditing,
+            onTap: null, 
+            readOnly: true, 
+            readType: true,
           ),
           const SizedBox(height: 20),
           DropdownCamp(

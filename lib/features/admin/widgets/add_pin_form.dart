@@ -29,7 +29,7 @@ class _AddPinFormState extends State<AddPinForm> {
   final descController = TextEditingController();
   String? selectedType;
 
-  final List<String> types = ['entrada', 'museo', 'pirámide'];
+  final List<String> types = ['entrada', 'museo', 'piramide'];
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _AddPinFormState extends State<AddPinForm> {
       selectedType = normalizeType(widget.existingPin!['type']);
     }
   }
+
   String? normalizeType(String? value) {
     if (value == null) return null;
     String normalize(String s) => s.toLowerCase().replaceAll('á', 'a').replaceAll('é', 'e').replaceAll('í', 'i').replaceAll('ó', 'o').replaceAll('ú', 'u');
@@ -49,8 +50,7 @@ class _AddPinFormState extends State<AddPinForm> {
         return type;
       }
     }
-
-    return null; 
+    return null;
   }
 
   Future<void> _savePin() async {
@@ -86,11 +86,17 @@ class _AddPinFormState extends State<AddPinForm> {
           runSpacing: 16,
           children: [
             Text('Añadir Pin en (${widget.latitude.toStringAsFixed(5)}, ${widget.longitude.toStringAsFixed(5)})'),
-            TextCamp(label: 'Título', controller: titleController,
-                        emptyAndSpecialCharValidation: true,
-             ),
-            TextCamp(label: 'Descripción', controller: descController,
-                        emptyAndSpecialCharValidation: true,
+            TextCamp(
+              label: 'Título',
+              controller: titleController,
+              emptyAndSpecialCharValidation: true,
+            ),
+            TextCamp(
+              label: 'Descripción',
+              controller: descController,
+              emptyAndSpecialCharValidation: true,
+              maxLines: 5, // Allow the text field to expand vertically
+              keyboardType: TextInputType.multiline, // Enable multi-line input
             ),
             DropdownCamp(
               label: 'Tipo',
@@ -100,7 +106,6 @@ class _AddPinFormState extends State<AddPinForm> {
               validator: (value) => value == null ? 'Selecciona un tipo' : null,
             ),
             ButtonR(onTap:_savePin,text: 'Guardar Pin',icon: Icons.save,color: AppColors.azulOscuro,),
-
           ],
         ),
       ),

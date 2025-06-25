@@ -1,4 +1,5 @@
-import 'package:cochasqui_park/shared/themes/colors.dart';
+
+import 'package:cochasqui_park/shared/themes/colors.dart'; 
 import 'package:cochasqui_park/shared/widgets/DropdownCamp.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/shared/widgets/text_camp.dart';
@@ -36,7 +37,7 @@ class _ManageARadminState extends State<ManageARadmin> {
       'Modelo7',
       'Modelo8'
     ],
-    'pirámides': [
+    'pirámides': [ 
       'Piramide1',
       'Piramide2',
       'Piramide3',
@@ -44,9 +45,9 @@ class _ManageARadminState extends State<ManageARadmin> {
       'Piramide5'
     ],
   };
+
   void _resetForm() {
-    _formKey.currentState
-        ?.reset(); 
+    _formKey.currentState?.reset();
     nameController.clear();
     descController.clear();
     riddleController.clear();
@@ -59,7 +60,20 @@ class _ManageARadminState extends State<ManageARadmin> {
   }
 
   void uploadToSupabase() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, completa todos los campos requeridos.')),
+      );
+      return;
+    }
+
+    if (selectedCategory == null || selectedKey == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, selecciona una categoría y un modelo.')),
+      );
+      return;
+    }
+
     final supabase = Supabase.instance.client;
 
     final data = {
@@ -71,44 +85,45 @@ class _ManageARadminState extends State<ManageARadmin> {
       'answer': answerController.text,
     };
 
-    if (editingModel != null) {
-      await supabase
-          .from('ar_models')
-          .update(data)
-          .eq('id', editingModel!['id']);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Modelo actualizado')));
-    } else {
-      await supabase.from('ar_models').insert(data);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Modelo subido')));
-    }
+    try {
+      if (editingModel != null) {
+        await supabase
+            .from('ar_models')
+            .update(data)
+            .eq('id', editingModel!['id']);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Modelo actualizado exitosamente')));
+      } else {
+        await supabase.from('ar_models').insert(data);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Modelo subido exitosamente')));
+      }
 
-    _formKey.currentState!.reset();
-    nameController.clear();
-    descController.clear();
-    riddleController.clear();
-    answerController.clear();
-    selectedCategory = null;
-    selectedKey = null;
-    editingModel = null;
-    setState(() {});
+      _resetForm(); 
+      setState(() {}); 
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error al subir/actualizar modelo: ${e.toString()}')));
+    }
   }
 
   Future<List<Map<String, dynamic>>> fetchModels() async {
     final supabase = Supabase.instance.client;
-    final response = await supabase.from('ar_models').select();
-    return List<Map<String, dynamic>>.from(response);
+    try {
+      final response = await supabase.from('ar_models').select();
+      return List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      return []; 
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final keys =
-        selectedCategory != null ? categoryKeys[selectedCategory]! : [];
+
+    final keys = categoryKeys[selectedCategory] ?? [];
 
     return Scaffold(
-      appBar: AppBar(title: Text('Administrar Modelos AR')),
+      appBar: AppBar(title: const Text('Administrar Modelos AR')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -122,7 +137,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     icon: Icons.add,
                     text: 'Añadir',
                     onTap: () {
-                      _resetForm(); 
+                      _resetForm();
                       setState(() {
                         currentView = 'add';
                       });
@@ -145,7 +160,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text(
-                                  'Por favor, selecciona un modelo primero desde "Ver modelos" para editar.')),
+                                  'Por favor, selecciona un modelo primero desde "Listar" para editar.')),
                         );
                       }
                     },
@@ -161,7 +176,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     onTap: () {
                       setState(() {
                         currentView = 'list';
-                        _resetForm();
+                        _resetForm(); 
                       });
                     },
                     color: AppColors.amarillo,
@@ -188,7 +203,8 @@ class _ManageARadminState extends State<ManageARadmin> {
                         label: 'Descripción',
                         controller: descController,
                         emptyAndSpecialCharValidation: true,
-
+                        maxLines: 5, 
+                        keyboardType: TextInputType.multiline, 
                       ),
                       const SizedBox(height: 10),
                       DropdownCamp(
@@ -208,7 +224,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                         DropdownCamp(
                           label: 'Modelo',
                           value: selectedKey,
-                          items: categoryKeys[selectedCategory]!,
+                          items: keys, 
                           onChanged: (value) =>
                               setState(() => selectedKey = value),
                         ),
@@ -217,12 +233,21 @@ class _ManageARadminState extends State<ManageARadmin> {
                         label: 'Adivinanza',
                         controller: riddleController,
                         emptyAndSpecialCharValidation: true,
-
                       ),
                       const SizedBox(height: 10),
                       TextCamp(
                         label: 'Respuesta',
                         controller: answerController,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Este campo no puede estar vacío.';
+                          }
+                          final validText = RegExp(r"^[\p{L}\p{N}\p{P}\p{S}\s]+$", unicode: true);
+                          if (!validText.hasMatch(value.trim())) {
+                            return 'Algunos caracteres no están permitidos.'; 
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 10),
                       ButtonR(
@@ -245,7 +270,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                           child: CircularProgressIndicator(
-                              color: Colors.white));
+                              color: AppColors.azulMedio)); 
                     }
                     if (snapshot.hasError) {
                       return Center(
@@ -255,7 +280,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
                           child: Text('No hay modelos para mostrar.',
-                              style: TextStyle(color: Colors.white)));
+                              style: TextStyle(color: Colors.black54))); 
                     }
                     final models = snapshot.data!;
                     return ListView.builder(
@@ -263,40 +288,38 @@ class _ManageARadminState extends State<ManageARadmin> {
                       itemBuilder: (context, index) {
                         final model = models[index];
                         return Card(
-                          color: Colors.grey[
-                              850], 
+                          color: AppColors.celesteClaro, 
                           margin: const EdgeInsets.symmetric(
                               vertical: 5, horizontal: 0),
                           child: ListTile(
-                            title: Text(model['name'],
-                                style: const TextStyle(color: Colors.white)),
+                            title: Text(model['name'] ?? 'Sin Nombre',
+                                style: const TextStyle(color: AppColors.azulOscuro, fontWeight: FontWeight.bold)),
                             subtitle: Text(
-                                'Categoría: ${model['category']} | Modelo: ${model['key']}',
-                                style: const TextStyle(color: Colors.grey)),
+                                'Categoría: ${model['category'] ?? 'N/A'} | Modelo: ${model['key'] ?? 'N/A'}',
+                                style: const TextStyle(color: AppColors.azulGris)),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.edit,
-                                      color: Colors.blueAccent),
+                                      color: AppColors.azulMedio), 
                                   onPressed: () {
                                     setState(() {
                                       editingModel = model;
-                                      nameController.text = model['name'];
+                                      nameController.text = model['name'] ?? '';
                                       descController.text =
-                                          model['description'];
-                                      riddleController.text = model['riddle'];
-                                      answerController.text = model['answer'];
+                                          model['description'] ?? '';
+                                      riddleController.text = model['riddle'] ?? '';
+                                      answerController.text = model['answer'] ?? '';
                                       selectedCategory = model['category'];
                                       selectedKey = model['key'];
-                                      currentView =
-                                          'edit'; 
+                                      currentView = 'edit';
                                     });
                                   },
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete,
-                                      color: Colors.redAccent),
+                                      color: AppColors.rojo), 
                                   onPressed: () async {
                                     final supabase = Supabase.instance.client;
                                     try {

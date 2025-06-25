@@ -99,7 +99,6 @@ class _RegisterScreenProfile extends State<RegisterScreenProfile> {
               }
               return null;
             },
-            autovalidateMode: AutovalidateMode.onUserInteraction, 
           ),
         ],
       ),
