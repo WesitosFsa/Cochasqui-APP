@@ -57,4 +57,7 @@ Puedes descargar la APK de Cochasquí Park para dispositivos Android desde el si
     ```bash
     flutter run
     ```
+## Esquema de la bdd en supabase
+![image](https://github.com/user-attachments/assets/852e076b-2b87-40ac-baf8-a8b630297cfa)
+
 
