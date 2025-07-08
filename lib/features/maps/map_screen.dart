@@ -13,7 +13,6 @@ import 'package:mbtiles/mbtiles.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cochasqui_park/core/powersync/powersync.dart';
-// ignore: depend_on_referenced_packages
 import 'package:uuid/uuid.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
@@ -75,21 +74,14 @@ class _MapScreen extends State<MapScreen> {
 
   Future<void> _startListeningPosition() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return;
-    }
+    if (!serviceEnabled) return;
 
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return;
-      }
+      if (permission == LocationPermission.denied) return;
     }
-    if (permission == LocationPermission.deniedForever) {
-      return;
-    }
+    if (permission == LocationPermission.deniedForever) return;
 
     _positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
@@ -153,7 +145,7 @@ class _MapScreen extends State<MapScreen> {
               const SizedBox(height: 8),
               Text(pin.description),
               const SizedBox(height: 16),
-              if (isLoggedIn && !pin.visited) 
+              if (isLoggedIn && !pin.visited)
                 ButtonR(
                   text: 'Marcar como visitado',
                   onTap: () async {
@@ -164,8 +156,8 @@ class _MapScreen extends State<MapScreen> {
                     if (currentUserId == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content:
-                                Text('Error: Usuario no autenticado para marcar pin.')),
+                            content: Text(
+                                'Error: Usuario no autenticado para marcar pin.')),
                       );
                       return;
                     }
@@ -203,9 +195,7 @@ class _MapScreen extends State<MapScreen> {
                 const SizedBox(height: 10),
               ButtonR(
                 text: 'Cerrar',
-                onTap: () {
-                  Navigator.pop(context);
-                },
+                onTap: () => Navigator.pop(context),
                 color: Colors.grey,
                 icon: Icons.close,
               ),
@@ -216,10 +206,35 @@ class _MapScreen extends State<MapScreen> {
     );
   }
 
+  Stream<List<MapPin>> watchMapPinsSupabase({String? userId}) async* {
+    final pins = await Supabase.instance.client
+        .from('map_pins')
+        .select();
+
+    Map<int, bool> visitedMap = {};
+    if (userId != null) {
+      final visited = await Supabase.instance.client
+          .from('visited_pins')
+          .select()
+          .eq('user_id', userId);
+
+      visitedMap = {
+        for (final v in visited) v['pin_id'] as int: true,
+      };
+    }
+
+    yield pins.map<MapPin>((json) {
+      final pinId = json['id'] as int;
+      return MapPin.fromJson(json).copyWith(
+        visited: visitedMap[pinId] ?? false,
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final userId = Supabase.instance.client.auth.currentUser?.id;
-    final bool isLoggedIn = userId != null; 
+    final bool isLoggedIn = userId != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -242,7 +257,9 @@ class _MapScreen extends State<MapScreen> {
           if (snapshot.hasData) {
             _mbtiles = snapshot.data;
             return StreamBuilder<List<MapPin>>(
-              stream: watchMapPins(db, isLoggedIn ? userId : null),
+              stream: isLoggedIn
+                  ? watchMapPins(db, userId) 
+                  : watchMapPinsSupabase(),  
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Center(
@@ -299,6 +316,7 @@ class _MapScreen extends State<MapScreen> {
               },
             );
           }
+
           if (snapshot.hasError) {
             return Center(child: Text(snapshot.error.toString()));
           }

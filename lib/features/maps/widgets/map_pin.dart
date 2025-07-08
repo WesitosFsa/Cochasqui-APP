@@ -6,7 +6,7 @@ class MapPin {
   final String title;
   final String description;
   final String type;
-  final bool visited; 
+  final bool visited;
 
   MapPin({
     required this.id,
@@ -19,17 +19,20 @@ class MapPin {
 
   factory MapPin.fromMap(Map<String, dynamic> map, {bool visited = false}) {
     return MapPin(
-      id: map['id'] as int, 
+      id: map['id'] as int,
       location: LatLng(
-        map['latitude'] as double, 
-        map['longitude'] as double,
+        (map['latitude'] as num).toDouble(),
+        (map['longitude'] as num).toDouble(),
       ),
-      title: map['title'] as String, 
-      description: map['description'] as String? ?? '', 
-      type: map['type'] as String? ?? '', 
+      title: map['title'] as String,
+      description: map['description'] as String? ?? '',
+      type: map['type'] as String? ?? '',
       visited: visited,
     );
   }
+
+  // Alias por si usas fromJson
+  factory MapPin.fromJson(Map<String, dynamic> map) => MapPin.fromMap(map);
 
   Map<String, dynamic> toMap() {
     return {
@@ -41,5 +44,23 @@ class MapPin {
       'longitude': location.longitude,
     };
   }
-}
 
+  // Para actualizar solo ciertos campos sin perder los demás
+  MapPin copyWith({
+    int? id,
+    LatLng? location,
+    String? title,
+    String? description,
+    String? type,
+    bool? visited,
+  }) {
+    return MapPin(
+      id: id ?? this.id,
+      location: location ?? this.location,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      type: type ?? this.type,
+      visited: visited ?? this.visited,
+    );
+  }
+}
