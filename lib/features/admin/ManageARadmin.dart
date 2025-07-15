@@ -1,5 +1,4 @@
-
-import 'package:cochasqui_park/shared/themes/colors.dart'; 
+import 'package:cochasqui_park/shared/themes/colors.dart';
 import 'package:cochasqui_park/shared/widgets/DropdownCamp.dart';
 import 'package:cochasqui_park/shared/widgets/buttonR.dart';
 import 'package:cochasqui_park/shared/widgets/text_camp.dart';
@@ -25,25 +24,14 @@ class _ManageARadminState extends State<ManageARadmin> {
   String? selectedKey;
   String currentView = 'list';
   Map<String, dynamic>? editingModel;
+  List<String> usedKeys = [];
 
   final Map<String, List<String>> categoryKeys = {
     'museo': [
-      'Modelo1',
-      'Modelo2',
-      'Modelo3',
-      'Modelo4',
-      'Modelo5',
-      'Modelo6',
-      'Modelo7',
-      'Modelo8'
+      'Modelo1', 'Modelo2', 'Modelo3', 'Modelo4',
+      'Modelo5', 'Modelo6', 'Modelo7', 'Modelo8'
     ],
-    'pirámides': [ 
-      'Piramide1',
-      'Piramide2',
-      'Piramide3',
-      'Piramide4',
-      'Piramide5'
-    ],
+    'pirámides': ['Piramide1', 'Piramide2', 'Piramide3', 'Piramide4', 'Piramide5'],
   };
 
   void _resetForm() {
@@ -86,24 +74,39 @@ class _ManageARadminState extends State<ManageARadmin> {
     };
 
     try {
-      if (editingModel != null) {
-        await supabase
+      if (editingModel == null) {
+        final existing = await supabase
             .from('ar_models')
-            .update(data)
-            .eq('id', editingModel!['id']);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Modelo actualizado exitosamente')));
-      } else {
+            .select()
+            .eq('key', selectedKey!)
+            .maybeSingle();
+
+        if (existing != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Modelo ya añadido, selecciona otro diferente.')),
+          );
+          return;
+        }
+
         await supabase.from('ar_models').insert(data);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text('Modelo subido exitosamente')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Modelo subido exitosamente')));
+      } else {
+        await supabase.from('ar_models').update(data).eq('id', editingModel!['id']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Modelo actualizado exitosamente')));
       }
 
-      _resetForm(); 
-      setState(() {}); 
+      _resetForm();
+      await fetchUsedKeys();
+
+      setState(() {
+        currentView = 'list'; // <-- cambio automático a lista
+      });
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error al subir/actualizar modelo: ${e.toString()}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al subir/actualizar modelo: ${e.toString()}')),
+      );
     }
   }
 
@@ -113,14 +116,36 @@ class _ManageARadminState extends State<ManageARadmin> {
       final response = await supabase.from('ar_models').select();
       return List<Map<String, dynamic>>.from(response);
     } catch (e) {
-      return []; 
+      return [];
+    }
+  }
+
+  Future<void> fetchUsedKeys() async {
+    final supabase = Supabase.instance.client;
+    try {
+      final response = await supabase.from('ar_models').select('key');
+      final keyList = List<Map<String, dynamic>>.from(response);
+      usedKeys = keyList.map((item) => item['key'].toString()).toList();
+    } catch (e) {
+      usedKeys = [];
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    fetchUsedKeys();
+  }
 
-    final keys = categoryKeys[selectedCategory] ?? [];
+  @override
+  Widget build(BuildContext context) {
+    final keys = selectedCategory == null
+        ? []
+        : categoryKeys[selectedCategory]!
+            .where((k) => editingModel != null && k == editingModel!['key']
+                ? true
+                : !usedKeys.contains(k))
+            .toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Administrar Modelos AR')),
@@ -176,7 +201,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     onTap: () {
                       setState(() {
                         currentView = 'list';
-                        _resetForm(); 
+                        _resetForm();
                       });
                     },
                     color: AppColors.amarillo,
@@ -203,8 +228,8 @@ class _ManageARadminState extends State<ManageARadmin> {
                         label: 'Descripción',
                         controller: descController,
                         emptyAndSpecialCharValidation: true,
-                        maxLines: 5, 
-                        keyboardType: TextInputType.multiline, 
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
                       ),
                       const SizedBox(height: 10),
                       DropdownCamp(
@@ -214,8 +239,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                         onChanged: (value) {
                           setState(() {
                             selectedCategory = value;
-                            selectedKey =
-                                null; 
+                            selectedKey = null;
                           });
                         },
                       ),
@@ -224,7 +248,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                         DropdownCamp(
                           label: 'Modelo',
                           value: selectedKey,
-                          items: keys, 
+                          items: keys.cast<String>(),
                           onChanged: (value) =>
                               setState(() => selectedKey = value),
                         ),
@@ -242,9 +266,10 @@ class _ManageARadminState extends State<ManageARadmin> {
                           if (value == null || value.trim().isEmpty) {
                             return 'Este campo no puede estar vacío.';
                           }
-                          final validText = RegExp(r"^[\p{L}\p{N}\p{P}\p{S}\s]+$", unicode: true);
+                          final validText =
+                              RegExp(r"^[\p{L}\p{N}\p{P}\p{S}\s]+$", unicode: true);
                           if (!validText.hasMatch(value.trim())) {
-                            return 'Algunos caracteres no están permitidos.'; 
+                            return 'Algunos caracteres no están permitidos.';
                           }
                           return null;
                         },
@@ -270,7 +295,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                           child: CircularProgressIndicator(
-                              color: AppColors.azulMedio)); 
+                              color: AppColors.azulMedio));
                     }
                     if (snapshot.hasError) {
                       return Center(
@@ -280,7 +305,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
                           child: Text('No hay modelos para mostrar.',
-                              style: TextStyle(color: Colors.black54))); 
+                              style: TextStyle(color: Colors.black54)));
                     }
                     final models = snapshot.data!;
                     return ListView.builder(
@@ -288,12 +313,14 @@ class _ManageARadminState extends State<ManageARadmin> {
                       itemBuilder: (context, index) {
                         final model = models[index];
                         return Card(
-                          color: AppColors.celesteClaro, 
-                          margin: const EdgeInsets.symmetric(
-                              vertical: 5, horizontal: 0),
+                          color: AppColors.celesteClaro,
+                          margin:
+                              const EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                           child: ListTile(
                             title: Text(model['name'] ?? 'Sin Nombre',
-                                style: const TextStyle(color: AppColors.azulOscuro, fontWeight: FontWeight.bold)),
+                                style: const TextStyle(
+                                    color: AppColors.azulOscuro,
+                                    fontWeight: FontWeight.bold)),
                             subtitle: Text(
                                 'Categoría: ${model['category'] ?? 'N/A'} | Modelo: ${model['key'] ?? 'N/A'}',
                                 style: const TextStyle(color: AppColors.azulGris)),
@@ -302,15 +329,17 @@ class _ManageARadminState extends State<ManageARadmin> {
                               children: [
                                 IconButton(
                                   icon: const Icon(Icons.edit,
-                                      color: AppColors.azulMedio), 
+                                      color: AppColors.azulMedio),
                                   onPressed: () {
                                     setState(() {
                                       editingModel = model;
                                       nameController.text = model['name'] ?? '';
                                       descController.text =
                                           model['description'] ?? '';
-                                      riddleController.text = model['riddle'] ?? '';
-                                      answerController.text = model['answer'] ?? '';
+                                      riddleController.text =
+                                          model['riddle'] ?? '';
+                                      answerController.text =
+                                          model['answer'] ?? '';
                                       selectedCategory = model['category'];
                                       selectedKey = model['key'];
                                       currentView = 'edit';
@@ -319,7 +348,7 @@ class _ManageARadminState extends State<ManageARadmin> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete,
-                                      color: AppColors.rojo), 
+                                      color: AppColors.rojo),
                                   onPressed: () async {
                                     final supabase = Supabase.instance.client;
                                     try {
@@ -327,15 +356,15 @@ class _ManageARadminState extends State<ManageARadmin> {
                                           .from('ar_models')
                                           .delete()
                                           .eq('id', model['id']);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
                                               content: Text(
                                                   'Modelo eliminado exitosamente')));
-                                      setState(
-                                          () {}); 
+                                      await fetchUsedKeys();
+                                      setState(() {});
                                     } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
                                               content: Text(
                                                   'Error al eliminar: ${e.toString()}')));
                                     }
