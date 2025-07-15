@@ -8,23 +8,23 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool isGuest; 
+  final bool isGuest;
 
-  const HomeScreen({super.key, this.isGuest = false}); 
+  const HomeScreen({super.key, this.isGuest = false});
 
   @override
-  State<HomeScreen> createState() => _HomeScreen();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  late bool _isGuest; 
+  late bool _isGuest;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _isGuest = widget.isGuest; 
+    _isGuest = widget.isGuest;
   }
 
   @override
@@ -33,7 +33,8 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  void mostrarDetalle({
+  /// Muestra la hoja inferior para todas las tarjetas horizontales (Noticias/Información/Camping)
+  void _mostrarDetalle({
     required BuildContext context,
     required String titulo,
     required String descripcion,
@@ -43,50 +44,61 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (_) => SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(titulo,
-                  style:
-                      const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  'assets/images/$imagen',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                      ),
-                    );
-                  },
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 20,
+          right: 20,
+          top: 20,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(titulo, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'assets/images/$imagen',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 150,
+                  color: Colors.grey[300],
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
                 ),
               ),
-              const SizedBox(height: 10),
-              Text(descripcion, style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+            Text(descripcion, style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
   }
 
-  var moreOptionsImages = {
+  /// Descripciones inventadas para las "Más opciones"
+  final Map<String, String> _descripcionOpciones = {
+    "Pirámides":
+        "Explora los vestigios milenarios de las pirámides de Cochasquí y siente la energía ancestral que aún se percibe en cada rincón. Un paseo ideal para los amantes de la historia y la arqueología.",
+    "Llamas":
+        "Conoce de cerca a nuestras adorables llamas, aliméntalas y aprende sobre su importancia cultural y económica en los Andes. ¡Una experiencia inolvidable para grandes y chicos!",
+    "Camping":
+        "Pasa una noche bajo las estrellas andinas. Nuestras áreas de camping cuentan con todas las comodidades necesarias para que tu estadía sea segura y confortable.",
+    "Astroturismo":
+        "El cielo despejado de Cochasquí te regalará una de las mejores vistas de la Vía Láctea. Únete a nuestras sesiones de astroturismo y descubre los secretos del universo.",
+    "Cabañas":
+        "Relájate en nuestras acogedoras cabañas de madera, rodeadas de naturaleza. El lugar perfecto para desconectar y recargar energías.",
+    "Zona BBQ":
+        "Comparte con familia y amigos en nuestra zona BBQ totalmente equipada. Parrillas, mesas y la mejor vista panorámica te esperan.",
+  };
+
+  /// Mapa imagen ➜ título
+  final Map<String, String> _moreOptionsImages = {
     "Opcion1.png": "Pirámides",
     "Opcion2.png": "Llamas",
     "Opcion3.png": "Camping",
@@ -98,17 +110,18 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final userProvider = _isGuest ? null : Provider.of<UserProvider>(context);
-    final currentUser = userProvider?.user; 
+    final currentUser = userProvider?.user;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isTablet = screenWidth > 600;
 
+    /* --------- CONTENIDO DE LAS LISTAS --------- */
     final List<Map<String, String>> noticias = [
       {
         "titulo": "¡Celebremos el Inti Raymi en Cochasquí!",
         "descripcion":
-            "Este año, el Parque Arqueológico Cochasquí se prepara para celebrar el Inti Raymi, la Fiesta del Sol, con una serie de eventos culturales y tradicionales. ¡No te pierdas esta experiencia única para conectar con nuestras raíces ancestrales y disfrutar de la música, danza y gastronomía andina! Mantente atento a nuestras redes sociales para el cronograma completo de actividades.",
+            "Este año, el Parque Arqueológico Cochasquí se prepara para celebrar el Inti Raymi, la Fiesta del Sol, con una serie de eventos culturales y tradicionales. ¡No te pierdas esta experiencia única!",
         "imagen": "Noticia1.png",
       },
     ];
@@ -117,31 +130,20 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       {
         "titulo": "¿Qué es Cochasquí?",
         "descripcion":
-            "En Cochasquí tenemos la presencia humana en el periodo de integración, periodo que comprende desde el 500 d.C. hasta el 1500 d.C. En el caso de Cochasquí, la datación radiocarbónica del sitio se divide en dos periodos: Cochasquí 1 (del 950 al 1250 d.C.) y Cochasquí 2 (del 1250 hasta 1550 d.C.), en el cual se incluye el periodo de ocupación inca del sitio. El museo de sitio Quilago exhibe piezas representativas del lugar, destacando la cultura Caranqui como principal, junto a otras culturas.",
-        "imagen": "Informacion1.png", 
+            "En Cochasquí tenemos presencia humana desde el periodo de integración (500 d.C. – 1500 d.C.). El museo Quilago exhibe piezas representativas de la cultura Caranqui y otras culturas andinas.",
+        "imagen": "Informacion1.png",
       },
       {
         "titulo": "Convive con las Llamas",
         "descripcion":
-            "Más de 60 llamas en nuestro parque arqueológico. Las llamas, animales emblemáticos de la región andina, están emparentadas a los camellos y son criaturas dóciles y curiosas que a menudo se acercan a nuestros visitantes para que les brinden sal de su mano, siendo esta una gran oportunidad para fotografiarse junto a estos simpáticos animales.",
-        "imagen": "Informacion2.png", 
+            "Más de 60 llamas habitan nuestro parque. Las llamas, animales emblemáticos de la región andina, son criaturas dóciles y curiosas que se acercan a los visitantes.",
+        "imagen": "Informacion2.png",
       },
       {
-        "titulo": "Un espacio para compartir entre familia y amigos",
+        "titulo": "Un espacio para compartir",
         "descripcion":
-            "En un entorno seguro y familiar ideal para quienes prefieren algo más de facilidades en sus acampadas. Disponemos de instalaciones como juegos infantiles, área de BBQ, espacios verdes, rodeados de un paisaje sin igual; muy recomendable para quienes gustan escapar de la rutina sin alejarse demasiado de la ciudad fomentando un estilo de vida más activo.",
+            "Disfruta de instalaciones como juegos infantiles, área de BBQ y espacios verdes. Escapa de la rutina con un paisaje sin igual.",
         "imagen": "Informacion3.png",
-      },
-      {
-        "titulo": "Ingreso al Parque Arqueológico",
-        "descripcion": "Niños – \$0,50\nAdultos – \$1,00",
-        "imagen": "Informacion5.png", 
-      },
-      {
-        "titulo": "Horario de Atención",
-        "descripcion":
-            "Lunes a Domingo\n08h00 a 16h30\nÚltimo grupo guiado ingresa a las 15h00",
-        "imagen": "Informacion4.png", 
       },
     ];
 
@@ -149,441 +151,315 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
       {
         "titulo": "Área de Camping",
         "descripcion": "Lunes a Domingo\n08h00 a 16h30",
-        "imagen": "Camping1.png", 
+        "imagen": "Camping1.png",
       },
       {
         "titulo": "Costo de Camping",
-        "descripcion":
-            "\$3.00 por persona\nAdemás contamos con alquiler de carpas, venta de leña y carbón… entre otros",
+        "descripcion": "\$3.00 por persona. También alquilamos carpas, leña y carbón.",
         "imagen": "Camping3.png",
-      },
-      {
-        "titulo": "Comodidades del Área de Camping",
-        "descripcion":
-            "Contamos con plataformas acondicionadas para que puedas armar tu carpa; encontrarás un área para hacer fogata o asado con tu propia parrilla y si no la tienes te podemos alquilar una.",
-        "imagen": "Camping2.png", 
-      },
-      {
-        "titulo": "Zona BBQ",
-        "descripcion":
-            "Contamos con cuatro chozones equipados con parrillas, lavabo, mesa y basurero con una capacidad de hasta 10 personas en cada chozón.",
-        "imagen": "Camping4.png", 
       },
     ];
 
+    /* ------------- UI PRINCIPAL ------------- */
     return Scaffold(
       backgroundColor: const Color(0xFFECEBE9),
-      drawer: Drawer(
-        child: ListView(
-          padding: const EdgeInsets.only(top: 50),
-          children: [
-            ListTile(
-              leading: const Icon(Icons.arrow_back),
-              title: const Text('Volver'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            if (!_isGuest) 
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Cerrar sesión'),
-                onTap: () async {
-                  final userProvider =
-                      Provider.of<UserProvider>(context, listen: false);
-                  await Supabase.instance.client.auth.signOut();
-                  userProvider.clearUser();
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false,
-                  );
-                },
-              ),
-            if (_isGuest) 
-              ListTile(
-                leading: const Icon(Icons.home), 
-                title: const Text('Volver a la pantalla principal'),
-                onTap: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                    (route) => false,
-                  );
-                },
-              ),
-          ],
-        ),
-      ),
+      drawer: _buildDrawer(context, currentUser),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.only(
-                  top: screenHeight * 0.07, left: screenWidth * 0.05),
-              child: Row(
-                children: [
-                  Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu, size: 30, color: Colors.black),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    ),
-                  ),
-                  const Expanded(child: SizedBox()),
-                  if (!_isGuest) 
-                    Container(
-                      margin: const EdgeInsets.only(right: 20),
-                      width: screenWidth * 0.13,
-                      height: screenWidth * 0.13,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey,
-                      ),
-                      child: currentUser?.avatarUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                '${currentUser!.avatarUrl!}?t=${DateTime.now().millisecondsSinceEpoch}',
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.person,
-                                      size: 40, color: Colors.white);
-                                },
-                              ),
-                            )
-                          : const Icon(Icons.person,
-                              size: 40, color: Colors.white),
-                    ),
-                ],
-              ),
-            ),
+            _buildAppBar(screenHeight, screenWidth, currentUser),
+            _buildBienvenida(isTablet),
+            _cardARPromo(screenWidth),
             SizedBox(height: screenHeight * 0.03),
-            Padding(
-              padding: EdgeInsets.only(left: screenWidth * 0.05),
-              child: text_bold(
-                  text: _isGuest ? 'Bienvenido Invitado' : 'Bienvenido', 
-                  size: isTablet ? 24 : 20),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.05, vertical: 8),
-              child: text_simple(
-                text:
-                    'Explora Cochasquí de una forma distinta: noticias, camping y realidad aumentada te esperan.',
-                size: 14,
-                color: Colors.black87,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          text_bold(
-                              text: '¡Vive la experiencia en Realidad Aumentada!',
-                              size: isTablet ? 18 : 16),
-                          const SizedBox(height: 8),
-                          text_simple(
-                              text: 'Descubre las pirámides como nunca antes.',
-                              size: 14),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.view_in_ar,
-                        size: 48, color: Colors.deepPurple)
-                  ],
-                ),
-              ),
-            ),
+            _tabs(screenWidth, noticias, informacion, campingInfo, screenHeight, isTablet),
             SizedBox(height: screenHeight * 0.03),
-            TabBar(
-              controller: _tabController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              isScrollable: true,
-              dividerHeight: 0,
-              indicatorColor: Colors.blueGrey,
-              tabs: const [
-                Tab(text: 'Noticias'),
-                Tab(text: 'Informacion'),
-                Tab(text: 'Camping'),
-              ],
-            ),
-            SizedBox(
-              height: screenHeight * 0.35,
-              width: double.infinity,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  ListView.builder(
-                    itemCount: noticias.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = noticias[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mostrarDetalle(
-                            context: context,
-                            titulo: item["titulo"]!,
-                            descripcion: item["descripcion"]!,
-                            imagen: item["imagen"]!,
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              right: screenWidth * 0.04,
-                              top: screenHeight * 0.015,
-                              left: (index == 0)
-                                  ? screenWidth * 0.04
-                                  : 0), 
-                          width: screenWidth * 0.55,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/${item["imagen"]!}'),
-                              fit: BoxFit.cover,
-                              onError: (exception, stackTrace) {
-                                return;
-                              },
-                            ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                item["titulo"]!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 5.0,
-                                      color: Colors.black,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  ListView.builder(
-                    itemCount: informacion.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = informacion[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mostrarDetalle(
-                            context: context,
-                            titulo: item["titulo"]!,
-                            descripcion: item["descripcion"]!,
-                            imagen: item["imagen"]!,
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              right: screenWidth * 0.04,
-                              top: screenHeight * 0.015,
-                              left: (index == 0) ? screenWidth * 0.04 : 0),
-                          width: screenWidth * 0.55,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/${item["imagen"]!}'),
-                              fit: BoxFit
-                                  .cover, 
-                              onError: (exception, stackTrace) {
-                                return;
-                              },
-                            ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                item["titulo"]!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 5.0,
-                                      color: Colors.black,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  ListView.builder(
-                    itemCount: campingInfo.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (BuildContext context, int index) {
-                      final item = campingInfo[index];
-                      return GestureDetector(
-                        onTap: () {
-                          mostrarDetalle(
-                            context: context,
-                            titulo: item["titulo"]!,
-                            descripcion: item["descripcion"]!,
-                            imagen: item["imagen"]!,
-                          );
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(
-                              right: screenWidth * 0.04,
-                              top: screenHeight * 0.015,
-                              left: (index == 0) ? screenWidth * 0.04 : 0),
-                          width: screenWidth * 0.55,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/${item["imagen"]!}'),
-                              fit: BoxFit
-                                  .cover, 
-                              onError: (exception, stackTrace) {
-                                return;
-                              },
-                            ),
-                          ),
-                          child: Align(
-                            alignment: Alignment.bottomLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Text(
-                                item["titulo"]!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  shadows: [
-                                    Shadow(
-                                      blurRadius: 5.0,
-                                      color: Colors.black,
-                                      offset: Offset(2.0, 2.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-             SizedBox(height: screenHeight * 0.03),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  text_bold(text: 'Más opciones', size: isTablet ? 22 : 18),
-                  text_simple(text: 'Ver todo', color: Colors.deepPurple),
-                ],
-              ),
-            ),
-            SizedBox(height: screenHeight * 0.012),
-            SizedBox(
-              height: screenHeight * (isTablet ? 0.40 : 0.25),
-              width: double.infinity,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: moreOptionsImages.length,
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-                itemBuilder: (_, index) {
-                  return Container(
-                    margin: EdgeInsets.only(
-                      right: screenWidth * 0.04,
-                      top: screenHeight * 0.015,
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: screenWidth * 0.2,
-                          height: screenWidth * 0.2,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/${moreOptionsImages.keys.elementAt(index)}'),
-                              fit: BoxFit.contain,
-                              onError: (exception, stackTrace) {
-                                return;
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        text_simple(
-                            text: moreOptionsImages.values.elementAt(index),
-                            color: Colors.grey),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            if (!_isGuest) 
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => FeedbackScreen()));
-                  },
-                  icon: const Icon(Icons.feedback),
-                  label: const Text("Dar feedback"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  ),
-                ),
-              ),
+            _masOpcionesTitulo(screenWidth, isTablet),
+            _masOpcionesLista(screenWidth, screenHeight),
+            if (!_isGuest) _botonFeedback(),
             const SizedBox(height: 30),
           ],
+        ),
+      ),
+    );
+  }
+
+  /* ---------------- COMPONENTES REUTILIZABLES ---------------- */
+
+  Widget _buildDrawer(BuildContext context, dynamic currentUser) {
+    return Drawer(
+      child: ListView(
+        padding: const EdgeInsets.only(top: 50),
+        children: [
+          ListTile(
+            leading: const Icon(Icons.arrow_back),
+            title: const Text('Volver'),
+            onTap: () => Navigator.pop(context),
+          ),
+          if (!_isGuest)
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Cerrar sesión'),
+              onTap: () async {
+                final userProvider = Provider.of<UserProvider>(context, listen: false);
+                await Supabase.instance.client.auth.signOut();
+                userProvider.clearUser();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (_) => false,
+                );
+              },
+            ),
+          if (_isGuest)
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Volver a la pantalla principal'),
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (_) => false,
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(double screenHeight, double screenWidth, dynamic currentUser) {
+    return Padding(
+      padding: EdgeInsets.only(top: screenHeight * 0.07, left: screenWidth * 0.05),
+      child: Row(
+        children: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu, size: 30),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            ),
+          ),
+          const Expanded(child: SizedBox()),
+          if (!_isGuest)
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              width: screenWidth * 0.13,
+              height: screenWidth * 0.13,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.grey,
+              ),
+              child: currentUser?.avatarUrl != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        '${currentUser!.avatarUrl}?t=${DateTime.now().millisecondsSinceEpoch}',
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(Icons.person, size: 40),
+                      ),
+                    )
+                  : const Icon(Icons.person, size: 40),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBienvenida(bool isTablet) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          text_bold(text: _isGuest ? 'Bienvenido Invitado' : 'Bienvenido', size: isTablet ? 24 : 20),
+          const SizedBox(height: 4),
+          text_simple(
+            text: 'Explora Cochasquí de una forma distinta: noticias, camping y realidad aumentada te esperan.',
+            size: 14,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardARPromo(double screenWidth) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.deepPurple.shade100,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  text_bold(text: '¡Vive la experiencia en Realidad Aumentada!', size: 16),
+                  SizedBox(height: 8),
+                  text_simple(text: 'Descubre las pirámides como nunca antes.', size: 14),
+                ],
+              ),
+            ),
+            const Icon(Icons.view_in_ar, size: 48, color: Colors.deepPurple),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _tabs(
+    double screenWidth,
+    List<Map<String, String>> noticias,
+    List<Map<String, String>> informacion,
+    List<Map<String, String>> campingInfo,
+    double screenHeight,
+    bool isTablet,
+  ) {
+    Widget _horizontalCards(List<Map<String, String>> data) {
+      return ListView.builder(
+        itemCount: data.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          final item = data[index];
+          return GestureDetector(
+            onTap: () => _mostrarDetalle(
+              context: context,
+              titulo: item['titulo']!,
+              descripcion: item['descripcion']!,
+              imagen: item['imagen']!,
+            ),
+            child: Container(
+              margin: EdgeInsets.only(
+                right: screenWidth * 0.04,
+                top: screenHeight * 0.015,
+                left: index == 0 ? screenWidth * 0.04 : 0,
+              ),
+              width: screenWidth * 0.55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: AssetImage('assets/images/${item['imagen']!}'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  item['titulo']!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    shadows: [Shadow(blurRadius: 5, color: Colors.black, offset: Offset(2, 2))],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    return Column(
+      children: [
+        TabBar(
+          controller: _tabController,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.grey,
+          isScrollable: true,
+          indicatorColor: Colors.blueGrey,
+          tabs: const [Tab(text: 'Noticias'), Tab(text: 'Información'), Tab(text: 'Camping')],
+        ),
+        SizedBox(
+          height: screenHeight * 0.35,
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _horizontalCards(noticias),
+              _horizontalCards(informacion),
+              _horizontalCards(campingInfo),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _masOpcionesTitulo(double screenWidth, bool isTablet) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          text_bold(text: 'Más opciones', size: isTablet ? 22 : 18),
+          text_simple(text: 'Ver todo', color: Colors.deepPurple),
+        ],
+      ),
+    );
+  }
+
+  Widget _masOpcionesLista(double screenWidth, double screenHeight) {
+    return SizedBox(
+      height: screenHeight * 0.25,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: _moreOptionsImages.length,
+        padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+        itemBuilder: (_, index) {
+          final imagen = _moreOptionsImages.keys.elementAt(index);
+          final titulo = _moreOptionsImages.values.elementAt(index);
+          final descripcion = _descripcionOpciones[titulo] ?? 'Descripción próximamente';
+
+          return GestureDetector(
+            onTap: () => _mostrarDetalle(
+              // ignore: no_wildcard_variable_uses
+              context: _,
+              titulo: titulo,
+              descripcion: descripcion,
+              imagen: imagen,
+            ),
+            child: Container(
+              margin: EdgeInsets.only(right: screenWidth * 0.04, top: screenHeight * 0.015),
+              child: Column(
+                children: [
+                  Container(
+                    width: screenWidth * 0.2,
+                    height: screenWidth * 0.2,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      image: DecorationImage(
+                        image: AssetImage('assets/images/$imagen'),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  text_simple(text: titulo, color: Colors.grey),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _botonFeedback() {
+    return Center(
+      child: ElevatedButton.icon(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => FeedbackScreen())),
+        icon: const Icon(Icons.feedback),
+        label: const Text('Dar feedback'),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
       ),
     );
