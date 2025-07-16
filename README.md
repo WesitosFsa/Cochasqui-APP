@@ -52,11 +52,14 @@ Puedes descargar la APK de Cochasquí Park para dispositivos Android desde el si
 
 3. Configura los archivos `app_config.dart` con las credenciales de Supabase y PowerSync.
 
-4. Corre la aplicación en un emulador o dispositivo físico:
+<img width="864" height="296" alt="image" src="https://github.com/user-attachments/assets/12604847-476e-478d-be63-d8802c5b94f0" />
+
+5. Corre la aplicación en un emulador o dispositivo físico:
 
     ```bash
     flutter run
     ```
+
 ## Esquema de la bdd en supabase
 ![image](https://github.com/user-attachments/assets/852e076b-2b87-40ac-baf8-a8b630297cfa)
 
