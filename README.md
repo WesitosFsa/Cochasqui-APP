@@ -12,6 +12,7 @@ Puedes descargar la APK de Cochasquí Park para dispositivos Android desde el si
 2. Si es la primera vez que instalas una app fuera de Google Play, habilita la opción Orígenes desconocidos en la configuración de seguridad de tu teléfono.
 3. Abre el archivo descargado e instala la aplicación.
 4. Listo Explora Cochasquí Park con tecnología AR y mapas interactivos.
+5. Recuerda tu dispositivo tiene que tener compatibilidad con Google Play ArCore
 
 ## Manual de Uso
 
